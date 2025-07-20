@@ -1,0 +1,42 @@
+.input_container {
+  position: relative;
+  margin: 50px auto;
+  width: 200px;
+}
+
+.input_container input[type="text"] {
+  font-size: 20px;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid var(--purple-200);
+  padding: 5px 0;
+  background-color: transparent;
+  outline: none;
+}
+
+.input_container .label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--disabled);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.input_container input[type="text"]:focus ~ .label,
+.input_container input[type="text"]:not(:placeholder-shown) ~ .label {
+  top: -20px;
+  font-size: 16px;
+  color: var(--purple-200);
+}
+
+.input_container input[type="text"]:invalid ~ .label {
+  color: var(--red-200);
+}
+
+.error_message {
+  color: var(--red-200);
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
+}

@@ -1,7 +1,9 @@
+import { useState } from "react";
 import Button from "./components/Button/Button";
-import Input from "./components/Input/Input";
+import TextInput from "./components/Input/TextInput";
 
 function App() {
+  const [inputValue, setInputValue] = useState("");
   return (
     <div>
       <Button
@@ -11,17 +13,15 @@ function App() {
       >
         Solid
       </Button>
-      <Button
-        as="a"
-        target="_blank"
-        href="https://stackoverflow.com/questions/33949469/using-css-modules-how-do-i-define-more-than-one-style-name"
-        variant="outline"
-      >
-        Outline
-      </Button>
 
       <hr />
-      <Input style={{ margin: "10px" }} />
+      <TextInput
+        id="test"
+        required
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        label="test"
+      />
     </div>
   );
 }
