@@ -11,7 +11,15 @@ function App() {
           console.log("btn clicked");
         }}
       >
-        Solid
+        Button
+      </Button>
+
+      <Button
+        href="https://www.w3schools.com/html/html_form_input_types.asp"
+        variant="outline"
+        as="a"
+      >
+        Link
       </Button>
 
       <hr />

@@ -1,10 +1,29 @@
-import type { PropsWithChildren } from "react";
+import type {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  PropsWithChildren,
+} from "react";
 import classes from "./Button.module.css";
 
-type ButtonProps = {
-  as?: "a" | "button";
-  variant?: "solid" | "outline";
-};
+type Variant = "solid" | "outline";
+
+interface BaseProps {
+  variant?: Variant;
+}
+
+interface AnchorProps
+  extends BaseProps,
+    AnchorHTMLAttributes<HTMLAnchorElement> {
+  as: "a";
+}
+
+interface NativeButtonProps
+  extends BaseProps,
+    ButtonHTMLAttributes<HTMLButtonElement> {
+  as?: "button";
+}
+
+type ButtonProps = AnchorProps | NativeButtonProps;
 
 export default function Button({
   children,
@@ -12,22 +31,24 @@ export default function Button({
   as = "button",
   ...props
 }: PropsWithChildren<ButtonProps>) {
-  const Component = as;
   const btnClasses = `${props.className} ${classes.btn} ${
     variant === "solid" ? classes.solid : classes.outline
   }`;
 
+  if (as === "a") {
+    const anchorProps = props as AnchorProps;
+    return (
+      <a {...anchorProps} className={btnClasses}>
+        {children}
+      </a>
+    );
+  }
+
+  const buttonProps = props as NativeButtonProps;
+
   return (
-    <Component
-      {...props}
-      style={props.style}
-      target={props.target}
-      href={props.href}
-      className={btnClasses}
-      type={props.type}
-      onClick={props.onClick}
-    >
+    <button {...buttonProps} style={props.style} className={btnClasses}>
       {children}
-    </Component>
+    </button>
   );
 }
