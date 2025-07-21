@@ -1,54 +1,34 @@
-import type {
-  AnchorHTMLAttributes,
-  ButtonHTMLAttributes,
-  PropsWithChildren,
-} from "react";
-import classes from "./Button.module.css";
+import * as React from "react";
+import styles from "./Button.module.css";
+import createClassName from "../../utils/createClassName";
 
-type Variant = "solid" | "outline";
+type ButtonVariant = "solid" | "outline";
 
-interface BaseProps {
-  variant?: Variant;
-}
+type ButtonProps<E extends React.ElementType> = {
+  as?: E;
+  variant?: ButtonVariant;
+} & React.ComponentPropsWithRef<E>;
 
-interface AnchorProps
-  extends BaseProps,
-    AnchorHTMLAttributes<HTMLAnchorElement> {
-  as: "a";
-}
-
-interface NativeButtonProps
-  extends BaseProps,
-    ButtonHTMLAttributes<HTMLButtonElement> {
-  as?: "button";
-}
-
-type ButtonProps = AnchorProps | NativeButtonProps;
-
-export default function Button({
-  children,
+export default function Button<E extends React.ElementType = "button">({
+  as,
   variant = "solid",
-  as = "button",
+  children,
+  ref,
   ...props
-}: PropsWithChildren<ButtonProps>) {
-  const btnClasses = `${props.className} ${classes.btn} ${
-    variant === "solid" ? classes.solid : classes.outline
-  }`;
+}: React.PropsWithChildren<ButtonProps<E>>) {
+  const Component = (as ?? "button") as React.ElementType;
 
-  if (as === "a") {
-    const anchorProps = props as AnchorProps;
-    return (
-      <a {...anchorProps} className={btnClasses}>
-        {children}
-      </a>
-    );
-  }
+  const { className, ...remainingProps } = props;
 
-  const buttonProps = props as NativeButtonProps;
+  const btnClasses = createClassName(
+    className,
+    styles.btn,
+    variant === "solid" ? styles.solid : styles.outline
+  );
 
   return (
-    <button {...buttonProps} style={props.style} className={btnClasses}>
+    <Component ref={ref} className={btnClasses} {...remainingProps}>
       {children}
-    </button>
+    </Component>
   );
 }

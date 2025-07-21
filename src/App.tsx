@@ -1,11 +1,12 @@
 import { useState } from "react";
-import Button from "./components/Button/Button";
 import TextInput from "./components/TextInput/TextInput";
 import SelectInput from "./components/SelectInput/SelectInput";
+import Button from "./components/Button/Button";
 
 function App() {
   const [inputValue, setInputValue] = useState("");
   const [selectValue, setSelectValue] = useState("");
+
   return (
     <div>
       <Button
