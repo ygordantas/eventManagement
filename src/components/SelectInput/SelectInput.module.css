@@ -1,0 +1,52 @@
+.input_container {
+  position: relative;
+  margin: 20px 0;
+  width: 200px;
+}
+
+.input_container select {
+  font-size: 16px;
+  width: 100%;
+  border-radius: 20px;
+  border: 2px solid var(--disabled);
+  padding: 10px;
+  background-color: transparent;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.input_container select:focus {
+  border-color: var(--purple-200);
+}
+
+.input_container .label {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  color: var(--disabled);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.input_container select:focus ~ .label,
+.input_container select.has_value ~ .label {
+  top: -20px;
+  font-size: 14px;
+  color: var(--purple-200);
+}
+
+.error_message {
+  color: var(--red-200);
+  font-size: 14px;
+  margin-top: 4px;
+  display: block;
+}
+.input_container select.hasError ~ .label {
+  color: var(--red-200);
+}
+
+.input_container select.hasError {
+  border-color: var(--red-200);
+}

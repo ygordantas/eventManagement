@@ -1,9 +1,11 @@
 import { useState } from "react";
 import Button from "./components/Button/Button";
 import TextInput from "./components/TextInput/TextInput";
+import SelectInput from "./components/SelectInput/SelectInput";
 
 function App() {
   const [inputValue, setInputValue] = useState("");
+  const [selectValue, setSelectValue] = useState("");
   return (
     <div>
       <Button
@@ -29,6 +31,18 @@ function App() {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         label="test"
+      />
+
+      <SelectInput
+        id="event-type"
+        label="Event Type"
+        required
+        value={selectValue}
+        onChange={(e) => setSelectValue(e.target.value)}
+        options={[
+          { value: "open", label: "Open" },
+          { value: "invite", label: "Invite Only" },
+        ]}
       />
     </div>
   );

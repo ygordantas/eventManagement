@@ -26,6 +26,7 @@ export default function TextInput({
 }: TextInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [validationError, setValidationError] = useState("");
+  const [touched, setTouched] = useState(false);
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
     onBlur(e);
@@ -34,11 +35,17 @@ export default function TextInput({
     if (!input) return;
 
     setValidationError(input.checkValidity() ? "" : input.validationMessage);
+    setTouched(true);
   };
+
+  const inputClassNames = [
+    touched && validationError ? classes.hasError : "",
+  ].join(" ");
 
   return (
     <div className={className + " " + classes.input_container}>
       <input
+        className={inputClassNames}
         ref={inputRef}
         placeholder=" "
         type="text"
@@ -54,7 +61,7 @@ export default function TextInput({
         {label}
         {required && " *"}
       </label>
-      {validationError && (
+      {validationError && touched && (
         <span className={classes.error_message}>{validationError}</span>
       )}
     </div>

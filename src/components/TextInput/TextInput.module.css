@@ -30,13 +30,17 @@
   color: var(--purple-200);
 }
 
-.input_container input[type="text"]:invalid ~ .label {
-  color: var(--red-200);
-}
-
 .error_message {
   color: var(--red-200);
   font-size: 14px;
   margin-top: 5px;
   display: block;
+}
+
+.input_container input.hasError {
+  border-bottom: 2px solid var(--red-200);
+}
+
+.input_container input.hasError ~ .label {
+  color: var(--red-200);
 }
