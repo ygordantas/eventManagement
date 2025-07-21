@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import classes from "./TextInput.module.css";
+import createClassName from "../../utils/createClassName";
 
 type TextInputProps = {
   id?: string;
@@ -43,7 +44,7 @@ export default function TextInput({
   ].join(" ");
 
   return (
-    <div className={className + " " + classes.input_container}>
+    <div className={createClassName(className, classes.input_container)}>
       <input
         className={inputClassNames}
         ref={inputRef}

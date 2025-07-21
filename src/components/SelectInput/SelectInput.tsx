@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import classes from "./SelectInput.module.css";
+import createClassName from "../../utils/createClassName";
 
 type SelectInputProps = {
   id?: string;
@@ -41,7 +42,7 @@ export default function SelectInput({
   ].join(" ");
 
   return (
-    <div className={className + " " + classes.input_container}>
+    <div className={createClassName(className, classes.input_container)}>
       <select
         ref={selectRef}
         id={id}
