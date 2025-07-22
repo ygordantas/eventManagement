@@ -3,34 +3,23 @@ import classes from "./SelectInput.module.css";
 import createClassName from "../../utils/createClassName";
 
 type SelectInputProps = {
-  id?: string;
-  label?: string;
-  value?: string;
   options: { value: string | number; label: string }[];
-  className?: string;
-  required?: boolean;
-  disabled?: boolean;
-  onBlur?: (event: React.FocusEvent<HTMLSelectElement, Element>) => void;
-  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-};
+  label?: string;
+} & React.ComponentPropsWithRef<"select">;
 
 export default function SelectInput({
-  id = "",
   label = "",
-  value = "",
   options,
-  className = "",
-  required = false,
-  disabled = false,
-  onBlur = () => {},
-  onChange = () => {},
+  ...props
 }: SelectInputProps) {
   const selectRef = useRef<HTMLSelectElement>(null);
   const [validationError, setValidationError] = useState("");
   const [touched, setTouched] = useState(false);
 
+  const { className, onBlur, ...remainingProps } = props;
+
   const handleBlur = (e: React.FocusEvent<HTMLSelectElement, Element>) => {
-    onBlur(e);
+    onBlur?.(e);
     const select = selectRef.current;
     if (!select) return;
     setValidationError(select.checkValidity() ? "" : select.validationMessage);
@@ -45,24 +34,24 @@ export default function SelectInput({
     <div className={createClassName(className, classes.input_container)}>
       <select
         ref={selectRef}
-        id={id}
-        required={required}
-        disabled={disabled}
         onBlur={handleBlur}
-        onChange={onChange}
-        value={value}
-        className={value ? classes.has_value : errorClasses}
+        className={remainingProps.value ? classes.has_value : errorClasses}
+        {...remainingProps}
       >
-        <option value="" disabled={required} hidden={required} />
+        <option
+          value=""
+          disabled={remainingProps.required}
+          hidden={remainingProps.required}
+        />
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
         ))}
       </select>
-      <label htmlFor={id} className={classes.label}>
+      <label htmlFor={remainingProps.id} className={classes.label}>
         {label}
-        {required && " *"}
+        {remainingProps.required && " *"}
       </label>
       {validationError && (
         <span className={classes.error_message}>{validationError}</span>
