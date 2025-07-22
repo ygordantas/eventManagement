@@ -34,7 +34,7 @@ function App() {
         label="test"
       />
 
-      <Input label="date" type="date" />
+      <Input label="date" type="datetime-local" />
 
       <SelectInput
         id="event-type"

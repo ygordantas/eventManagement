@@ -1,7 +1,7 @@
 .input_container {
   position: relative;
-  margin: 20px 0;
-  width: 200px;
+  margin: 50px auto;
+  max-width: 80vw;
 }
 
 .input_container select {
