@@ -9,9 +9,10 @@
   width: 100%;
   border: none;
   border-bottom: 2px solid var(--purple-200);
-  padding: 5px 0;
+
   background-color: transparent;
   outline: none;
+  padding: 5px;
 }
 
 .input_container .label {
@@ -43,4 +44,13 @@
 
 .input_container input.hasError ~ .label {
   color: var(--red-200);
+}
+
+.input_container input:disabled {
+  border-color: var(--disabled);
+  border-radius: 10px;
+  background-color: var(--disabled);
+  color: var(--purple-200);
+  cursor: not-allowed;
+  padding: 5px;
 }

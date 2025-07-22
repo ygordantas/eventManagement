@@ -34,12 +34,13 @@ function App() {
         label="test"
       />
 
-      <Input label="date" type="datetime-local" />
+      <Input disabled label="date" type="datetime-local" />
 
       <SelectInput
         id="event-type"
         label="Event Type"
         required
+        disabled
         value={selectValue}
         onChange={(e) => setSelectValue(e.target.value)}
         options={[

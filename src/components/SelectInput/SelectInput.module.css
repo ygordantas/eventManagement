@@ -51,3 +51,12 @@
 .input_container select.hasError {
   border-color: var(--red-200);
 }
+
+.input_container select:disabled {
+  border-color: var(--disabled);
+  border-radius: 10px;
+  background-color: var(--disabled);
+  color: var(--purple-200);
+  cursor: not-allowed;
+  padding: 5px;
+}
