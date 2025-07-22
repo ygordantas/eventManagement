@@ -10,6 +10,8 @@ function App() {
   return (
     <div>
       <Button
+        disabled
+        variant="outline"
         onClick={() => {
           console.log("btn clicked");
         }}
@@ -21,6 +23,7 @@ function App() {
         href="https://www.w3schools.com/html/html_form_input_types.asp"
         variant="outline"
         as="a"
+        disabled
       >
         Link
       </Button>

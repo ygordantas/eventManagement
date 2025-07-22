@@ -32,3 +32,10 @@
 .outline:hover {
   background-color: var(--purple-100);
 }
+
+.btn:disabled {
+  border-color: var(--disabled);
+  background-color: var(--disabled);
+  color: var(--purple-200);
+  cursor: not-allowed;
+}
