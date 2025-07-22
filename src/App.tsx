@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TextInput from "./components/TextInput/TextInput";
+import Input from "./components/Input/Input";
 import SelectInput from "./components/SelectInput/SelectInput";
 import Button from "./components/Button/Button";
 
@@ -26,13 +26,15 @@ function App() {
       </Button>
 
       <hr />
-      <TextInput
+      <Input
         id="test"
         required
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         label="test"
       />
+
+      <Input label="date" type="date" />
 
       <SelectInput
         id="event-type"

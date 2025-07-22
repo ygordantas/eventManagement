@@ -1,36 +1,20 @@
 import { useRef, useState } from "react";
-import classes from "./TextInput.module.css";
+import classes from "./Input.module.css";
 import createClassName from "../../utils/createClassName";
 
 type TextInputProps = {
-  id?: string;
   label?: string;
-  value?: string;
-  className?: string;
-  required?: boolean;
-  disabled?: boolean;
-  pattern?: string;
-  onBlur?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-};
+} & Omit<React.ComponentPropsWithRef<"input">, "placeholder">;
 
-export default function TextInput({
-  pattern,
-  id = "",
-  label = "",
-  value = "",
-  className = "",
-  required = false,
-  disabled = false,
-  onBlur = () => {},
-  onChange = () => {},
-}: TextInputProps) {
+export default function Input({ label, ...props }: TextInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [validationError, setValidationError] = useState("");
   const [touched, setTouched] = useState(false);
 
+  const { className, onBlur, type, ...remainingProps } = props;
+
   const handleBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
-    onBlur(e);
+    onBlur?.(e);
 
     const input = inputRef.current;
     if (!input) return;
@@ -47,20 +31,15 @@ export default function TextInput({
     <div className={createClassName(className, classes.input_container)}>
       <input
         className={inputClassNames}
+        type={type || "text"}
         ref={inputRef}
         placeholder=" "
-        type="text"
         onBlur={handleBlur}
-        onChange={onChange}
-        disabled={disabled}
-        id={id}
-        required={required}
-        value={value}
-        pattern={pattern}
+        {...remainingProps}
       />
-      <label htmlFor={id} className={classes.label}>
+      <label htmlFor={remainingProps.id} className={classes.label}>
         {label}
-        {required && " *"}
+        {remainingProps.required && " *"}
       </label>
       {validationError && touched && (
         <span className={classes.error_message}>{validationError}</span>
