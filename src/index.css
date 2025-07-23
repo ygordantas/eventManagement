@@ -7,15 +7,12 @@
 
   --white: #fff;
   --black: #000;
+  --gray-100: #cccccc;
+  --gray-200: #cececec5;
   --purple-100: #d5def5;
   --purple-200: #8594e4;
   --purple-300: #6643b5;
   --purple-400: #430f58;
   --box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
     rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-}
-
-* {
-  margin: 0px;
-  padding: 0px;
 }

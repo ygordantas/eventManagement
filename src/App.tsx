@@ -4,14 +4,11 @@ import Input from "./components/Input/Input";
 function App() {
   return (
     <div>
-      <Button
-        onClick={() => {
-          console.log("btn clicked");
-        }}
-      >
+      <Button disabled className="potato">
         Solid
       </Button>
       <Button
+        disabled
         as="a"
         target="_blank"
         href="https://stackoverflow.com/questions/33949469/using-css-modules-how-do-i-define-more-than-one-style-name"
