@@ -18,7 +18,8 @@ function App() {
       </Button>
 
       <hr />
-      <Input style={{ margin: "10px" }} />
+      <Input required label="Enter username" />
+      <Input type="number" label="Event date" />
     </div>
   );
 }

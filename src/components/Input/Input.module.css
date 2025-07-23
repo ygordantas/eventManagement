@@ -1,10 +1,58 @@
-.input {
-  padding: 5px;
-  border-radius: 5px;
-  border: 2px solid var(--purple-400);
+.input_container {
+  position: relative;
+  margin: 50px auto;
+  max-width: 80vw;
 }
 
-.input:focus {
-  border-color: var(--purple-200);
+.input_container input {
+  font-size: 20px;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid var(--purple-200);
+  background-color: transparent;
   outline: none;
+  padding: 5px;
+}
+
+.input_container label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--gray-100);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.input_container input:focus ~ label,
+.input_container input:not(:placeholder-shown) ~ label,
+.input_container input:disabled ~ label {
+  top: -23px;
+  left: 2px;
+  font-size: 16px;
+}
+
+.input_container input:focus ~ label {
+  color: var(--purple-200);
+}
+
+.input_container input:disabled {
+  border-color: var(--gray-200);
+  border-radius: 10px;
+  background-color: var(--gray-200);
+  color: var(--black);
+  cursor: not-allowed;
+  padding: 5px;
+}
+
+.input_container span {
+  color: var(--red-100);
+  font-size: 14px;
+}
+
+.input_container input.has_error {
+  border-bottom-color: var(--red-100);
+}
+
+.input_container input.has_error ~ label {
+  color: var(--red-100);
 }
