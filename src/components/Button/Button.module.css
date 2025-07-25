@@ -33,12 +33,7 @@
   background-color: var(--purple-100);
 }
 
-/* 
-  look into html attributes 
-  create a disabled class
-*/
-
-.btn:disabled {
+.disabled {
   border-color: var(--black);
   background-color: var(--gray-100);
   color: var(--black);

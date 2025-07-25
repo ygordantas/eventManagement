@@ -7,6 +7,7 @@ type ButtonProps<T extends React.ElementType> = {
   variant?: "solid" | "outline";
 } & React.ComponentPropsWithRef<T>;
 
+// Polymorphic element
 export default function Button<T extends React.ElementType = "button">({
   ref,
   children,
@@ -16,16 +17,23 @@ export default function Button<T extends React.ElementType = "button">({
 }: PropsWithChildren<ButtonProps<T>>) {
   const Component = as as React.ElementType;
 
-  const { className, ...remainingProps } = props;
+  const { className, disabled, href, target, ...remainingProps } = props;
 
   const btnClasses = createClassName(
     className,
     classes.btn,
-    variant === "solid" ? classes.solid : classes.outline
+    variant === "solid" ? classes.solid : classes.outline,
+    disabled && classes.disabled
   );
 
   return (
-    <Component ref={ref} className={btnClasses} {...remainingProps}>
+    <Component
+      ref={ref}
+      href={href && !disabled ? href : "#"}
+      target={target && !disabled ? target : ""}
+      className={btnClasses}
+      {...remainingProps}
+    >
       {children}
     </Component>
   );

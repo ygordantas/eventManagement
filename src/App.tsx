@@ -9,7 +9,7 @@ function App() {
       </Button>
       <Button
         disabled
-        as="a"
+        as="p"
         target="_blank"
         href="https://stackoverflow.com/questions/33949469/using-css-modules-how-do-i-define-more-than-one-style-name"
         variant="outline"
