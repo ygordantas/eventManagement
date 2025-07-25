@@ -1,0 +1,64 @@
+.select_container {
+  position: relative;
+  margin: 50px auto;
+  max-width: 80vw;
+}
+
+.select_container select {
+  font-size: 16px;
+  width: 100%;
+  border: 2px solid var(--gray-100);
+  border-radius: 20px;
+  padding: 10px;
+  background-color: transparent;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.select_container select:focus {
+  border-color: var(--purple-200);
+}
+
+.select_container label {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  color: var(--gray-100);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.select_container select:focus ~ label,
+.select_container select.has_value ~ label,
+.select_container select:disabled ~ label {
+  top: -23px;
+  left: 2px;
+  font-size: 16px;
+}
+
+.select_container select:focus ~ label {
+  color: var(--purple-200);
+}
+
+.select_container select:disabled {
+  border-color: var(--gray-200);
+  border-radius: 10px;
+  background-color: var(--gray-200);
+  color: var(--black);
+  cursor: not-allowed;
+  padding: 5px;
+}
+
+.select_container span {
+  color: var(--red-100);
+  font-size: 14px;
+}
+
+.select_container select.has_error {
+  border-color: var(--red-100);
+}
+
+.select_container select.has_error ~ label {
+  color: var(--red-100);
+}
