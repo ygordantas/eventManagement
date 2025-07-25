@@ -1,8 +1,10 @@
 .section {
-  height: 100vh;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: var(--purple-100);
+  margin: 40px auto;
 }
 
 .form_container {
@@ -14,7 +16,7 @@
   background-color: var(--white);
 }
 
-.form_container .register {
+.form_container .login {
   margin-top: 50px;
   padding: 10px 0px;
   border-top: 2px solid var(--purple-200);
@@ -23,7 +25,7 @@
   font-size: 14px;
 }
 
-.form_container .register p {
+.form_container .login p {
   font-weight: 600;
 }
 

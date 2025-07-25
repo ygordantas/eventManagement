@@ -3,7 +3,11 @@ import Button from "../../components/Button/Button";
 import Input from "../../components/Input/Input";
 import classes from "./LoginPage.module.css";
 
-export default function LoginPage() {
+type LoginPageProps = {
+  onRegisterClick: () => void;
+};
+
+export default function LoginPage({ onRegisterClick }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -18,11 +22,13 @@ export default function LoginPage() {
         <form onSubmit={onSubmitHandler}>
           <Input
             value={email}
+            required
             onChange={(e) => setEmail(e.target.value)}
             label="Email"
             type="email"
           />
           <Input
+            required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             label="Password"
@@ -33,7 +39,8 @@ export default function LoginPage() {
           </Button>
         </form>
         <div className={classes.register}>
-          <p>New around here?</p> <Button>Register</Button>
+          <p>New around here?</p>{" "}
+          <Button onClick={() => onRegisterClick()}>Register</Button>
         </div>
       </div>
     </section>
