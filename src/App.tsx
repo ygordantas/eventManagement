@@ -1,24 +1,16 @@
-import { useState } from "react";
+import { Route, Routes } from "react-router";
+import AuthLayout from "./components/AuthLayout/AuthLayout";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import RegistrationPage from "./pages/RegistrationPage/RegistrationPage";
 
-type Pages = "login" | "register";
-
 function App() {
-  const [currentPage, setCurrentPage] = useState<Pages>("login");
-
   return (
-    <div>
-      {currentPage === "login" ? (
-        <LoginPage onRegisterClick={() => setCurrentPage("register")} />
-      ) : (
-        <RegistrationPage
-          onLoginClick={() => {
-            setCurrentPage("login");
-          }}
-        />
-      )}
-    </div>
+    <Routes>
+      <Route element={<AuthLayout />}>
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegistrationPage />} />
+      </Route>
+    </Routes>
   );
 }
 

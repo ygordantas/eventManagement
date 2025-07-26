@@ -2,12 +2,9 @@ import { useState } from "react";
 import Button from "../../components/Button/Button";
 import Input from "../../components/Input/Input";
 import classes from "./LoginPage.module.css";
+import { Link } from "react-router";
 
-type LoginPageProps = {
-  onRegisterClick: () => void;
-};
-
-export default function LoginPage({ onRegisterClick }: LoginPageProps) {
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -17,32 +14,32 @@ export default function LoginPage({ onRegisterClick }: LoginPageProps) {
   };
 
   return (
-    <section className={classes.section}>
-      <div className={classes.form_container}>
-        <form onSubmit={onSubmitHandler}>
-          <Input
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
-            label="Email"
-            type="email"
-          />
-          <Input
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            label="Password"
-            type="password"
-          />
-          <Button type="submit" className={classes.center_btn}>
-            Login
-          </Button>
-        </form>
-        <div className={classes.register}>
-          <p>New around here?</p>{" "}
-          <Button onClick={() => onRegisterClick()}>Register</Button>
-        </div>
+    <>
+      <form onSubmit={onSubmitHandler}>
+        <Input
+          value={email}
+          required
+          onChange={(e) => setEmail(e.target.value)}
+          label="Email"
+          type="email"
+        />
+        <Input
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          label="Password"
+          type="password"
+        />
+        <Button align="center" type="submit" className={classes.center_btn}>
+          Login
+        </Button>
+      </form>
+      <div className={classes.footer}>
+        <p>New around here?</p>
+        <Button as={Link} to="/register">
+          Register
+        </Button>
       </div>
-    </section>
+    </>
   );
 }
