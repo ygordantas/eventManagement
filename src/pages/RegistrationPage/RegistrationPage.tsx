@@ -13,7 +13,19 @@ type RegistrationFormData = {
   dateOfBirth?: Date;
 };
 
-export default function RegistrationPage() {
+type RegistrationPageProps = {
+  onRegisterUser: (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    dateOfBirth: Date
+  ) => void;
+};
+
+export default function RegistrationPage({
+  onRegisterUser,
+}: RegistrationPageProps) {
   const [formData, setFormData] = useState<RegistrationFormData>({
     firstName: "",
     lastName: "",
@@ -24,7 +36,9 @@ export default function RegistrationPage() {
 
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert(JSON.stringify(formData));
+    const { firstName, lastName, email, password, dateOfBirth } = formData;
+
+    onRegisterUser(email, password, firstName, lastName, dateOfBirth!);
   };
 
   const getMaxDate = useMemo(() => {
