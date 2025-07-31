@@ -2,15 +2,18 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import App from "./App.tsx";
+import AlertProvider from "./contexts/AlertContext/AlertContextProvider.tsx";
 import AuthProvider from "./contexts/AuthContext/AuthContextProvider.tsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <AlertProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </AlertProvider>
     </BrowserRouter>
   </StrictMode>
 );

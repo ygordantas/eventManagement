@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import Button from "../../components/Button/Button";
 import Input from "../../components/Input/Input";
+import useAlertContext from "../../hooks/useAlertContext";
 import useAuthContext from "../../hooks/useAuthContext";
 import classes from "./LoginPage.module.css";
 
 export default function LoginPage() {
   const { login } = useAuthContext();
   const navigate = useNavigate();
+  const { showErrorAlert } = useAlertContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +20,7 @@ export default function LoginPage() {
       login(email, password);
       navigate("/");
     } catch (error) {
-      alert(error);
+      showErrorAlert(error instanceof Error ? error : String(error));
     }
   };
 

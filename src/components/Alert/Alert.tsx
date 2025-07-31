@@ -1,30 +1,21 @@
-import { useEffect, useState } from "react";
 import createClassName from "../../utils/createClassName";
 import classes from "./Alert.module.css";
 
+export type AlertType = "success" | "error" | "warning" | "info";
+
 type AlertProps = {
-  type: "success" | "error" | "warning" | "info";
-  message: string;
-  autoDismiss?: boolean;
-  dismissTimeInMs?: number;
+  message?: string;
+  type?: AlertType;
+  show?: boolean;
+  onClose?: () => void;
 };
 
-export default function Alert({ type, message, autoDismiss = false, dismissTimeInMs = 2000 }: AlertProps) {
-  const [show, setShow] = useState(true);
-
-  useEffect(() => {
-    if (!autoDismiss) return;
-
-    const timer = setTimeout(() => setShow(false), dismissTimeInMs);
-
-    return () => clearTimeout(timer);
-  }, [autoDismiss, dismissTimeInMs]);
-
+export default function Alert({ type = "info", message = "", show, onClose }: AlertProps) {
   return (
     <div className={createClassName(classes.container, classes[type], !show && classes.slideOut)} role='alert'>
       <div className={classes.content}>
         <div>{message}</div>
-        <button className={classes.close} onClick={() => setShow(false)}>
+        <button className={classes.close} onClick={onClose}>
           X
         </button>
       </div>
