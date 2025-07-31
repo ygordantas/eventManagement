@@ -1,9 +1,9 @@
 import type { PropsWithChildren } from "react";
-import type LoggedUser from "../models/LoggedUser";
+import type User from "../models/User";
 import { Navigate } from "react-router";
 
 type RouteGuardProps = {
-  loggedUser: LoggedUser | null;
+  loggedUser: User | null;
 };
 export default function RouteGuard({
   loggedUser,

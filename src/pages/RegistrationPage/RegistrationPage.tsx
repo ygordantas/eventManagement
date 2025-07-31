@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router";
 import Button from "../../components/Button/Button";
 import Input from "../../components/Input/Input";
-import classes from "./RegistrationPage.module.css";
-import { Link, useNavigate } from "react-router";
+import useAuthContext from "../../hooks/useAuthContext";
 import createClassName from "../../utils/createClassName";
+import classes from "./RegistrationPage.module.css";
 
 type RegistrationFormData = {
   firstName: string;
@@ -16,6 +17,7 @@ type RegistrationFormData = {
 
 export default function RegistrationPage() {
   const navigate = useNavigate();
+  const { register } = useAuthContext();
 
   const [formData, setFormData] = useState<RegistrationFormData>({
     firstName: "",
@@ -27,21 +29,18 @@ export default function RegistrationPage() {
 
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (localStorage.getItem(formData.email)) {
-      alert("User with provided email already exists.");
-      return;
+    try {
+      register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        dateOfBirth: formData.dateOfBirth!,
+      });
+      navigate("/");
+    } catch (error) {
+      alert(error);
     }
-
-    const { confirmPassword, ...user } = formData;
-
-    if (confirmPassword !== user.password) {
-      alert("Passwords do not match!");
-      return;
-    }
-
-    localStorage.setItem(user.email, JSON.stringify(user));
-    navigate("/");
   };
 
   const getMaxDate = useMemo(() => {
@@ -60,7 +59,7 @@ export default function RegistrationPage() {
       <form onSubmit={onSubmitHandler}>
         <Input
           required
-          label="First name"
+          label='First name'
           value={formData.firstName}
           onChange={(e) =>
             setFormData((prev) => ({
@@ -71,7 +70,7 @@ export default function RegistrationPage() {
         />
         <Input
           required
-          label="Last name"
+          label='Last name'
           value={formData.lastName}
           onChange={(e) =>
             setFormData((prev) => ({
@@ -89,8 +88,8 @@ export default function RegistrationPage() {
               email: e.target.value,
             }))
           }
-          label="Email"
-          type="email"
+          label='Email'
+          type='email'
         />
         <Input
           required
@@ -101,8 +100,8 @@ export default function RegistrationPage() {
               password: e.target.value,
             }))
           }
-          label="Password"
-          type="password"
+          label='Password'
+          type='password'
         />
         <Input
           required
@@ -113,31 +112,24 @@ export default function RegistrationPage() {
               confirmPassword: e.target.value,
             }))
           }
-          label="Confirm password"
-          type="password"
+          label='Confirm password'
+          type='password'
         />
 
         <p
           className={createClassName(
             classes.psw_not_match,
-            !doPasswordMatch &&
-              formData.confirmPassword.length > 0 &&
-              classes.show
-          )}
-        >
+            !doPasswordMatch && formData.confirmPassword.length > 0 && classes.show
+          )}>
           Passwords do not match!
         </p>
 
         <Input
           required
-          type="date"
+          type='date'
           max={getMaxDate}
-          label="Date of birth"
-          value={
-            formData.dateOfBirth
-              ? formData.dateOfBirth.toISOString().split("T")[0]
-              : ""
-          }
+          label='Date of birth'
+          value={formData.dateOfBirth ? formData.dateOfBirth.toISOString().split("T")[0] : ""}
           onChange={(e) => {
             setFormData((prev) => ({
               ...prev,
@@ -146,13 +138,13 @@ export default function RegistrationPage() {
           }}
         />
 
-        <Button disabled={!doPasswordMatch} align="center" type="submit">
+        <Button disabled={!doPasswordMatch} align='center' type='submit'>
           Create
         </Button>
       </form>
       <div className={classes.login}>
         <p>Already have an account?</p>
-        <Button as={Link} to="/login">
+        <Button as={Link} to='/login'>
           Go to login
         </Button>
       </div>
