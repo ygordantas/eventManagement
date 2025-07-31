@@ -1,20 +1,4 @@
-.section {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.form_container {
-  max-width: 80vw;
-  border: 2px solid var(--purple-200);
-  border-radius: 10px;
-  box-shadow: var(--box-shadow);
-  padding: 30px;
-  background-color: var(--white);
-}
-
-.form_container .register {
+.register {
   margin-top: 50px;
   padding: 10px 0px;
   border-top: 2px solid var(--purple-200);
@@ -23,11 +7,6 @@
   font-size: 14px;
 }
 
-.form_container .register p {
+.register p {
   font-weight: 600;
-}
-
-.center_btn {
-  display: block;
-  margin: 0px auto;
 }

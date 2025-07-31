@@ -11,6 +11,7 @@
   border-color: var(--purple-400);
   text-decoration: none;
   font-size: 16px;
+  line-height: 30px;
 }
 
 .btn:hover {
@@ -38,4 +39,25 @@
   background-color: var(--gray-100);
   color: var(--black);
   cursor: not-allowed;
+}
+
+.align_left,
+.align_right,
+.align_center {
+  display: block;
+}
+
+.align_left {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.align_center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align_right {
+  margin-left: auto;
+  margin-right: 0;
 }

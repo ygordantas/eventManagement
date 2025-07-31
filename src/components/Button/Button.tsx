@@ -5,6 +5,7 @@ import createClassName from "../../utils/createClassName";
 type ButtonProps<T extends React.ElementType> = {
   as?: T;
   variant?: "solid" | "outline";
+  align?: "center" | "right" | "left";
 } & React.ComponentPropsWithRef<T>;
 
 // Polymorphic element
@@ -13,6 +14,7 @@ export default function Button<T extends React.ElementType = "button">({
   children,
   as = "button",
   variant = "solid",
+  align,
   ...props
 }: PropsWithChildren<ButtonProps<T>>) {
   const Component = as as React.ElementType;
@@ -23,7 +25,8 @@ export default function Button<T extends React.ElementType = "button">({
     className,
     classes.btn,
     variant === "solid" ? classes.solid : classes.outline,
-    disabled && classes.disabled
+    disabled && classes.disabled,
+    align && classes[`align_${align}`]
   );
 
   return (

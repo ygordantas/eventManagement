@@ -1,22 +1,4 @@
-.section {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--purple-100);
-  margin: 40px auto;
-}
-
-.form_container {
-  max-width: 80vw;
-  border: 2px solid var(--purple-200);
-  border-radius: 10px;
-  box-shadow: var(--box-shadow);
-  padding: 30px;
-  background-color: var(--white);
-}
-
-.form_container .login {
+.login {
   margin-top: 50px;
   padding: 10px 0px;
   border-top: 2px solid var(--purple-200);
@@ -25,11 +7,18 @@
   font-size: 14px;
 }
 
-.form_container .login p {
+.login p {
   font-weight: 600;
 }
 
-.center_btn {
-  display: block;
-  margin: 0px auto;
+.psw_not_match {
+  visibility: hidden;
+  color: var(--red-100);
+  text-align: center;
+  font-size: 14px;
+  margin-top: 0px;
+}
+
+.show {
+  visibility: visible;
 }

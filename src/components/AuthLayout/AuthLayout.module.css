@@ -1,0 +1,16 @@
+.section {
+  margin: 20px 0px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form_container {
+  max-width: 80vw;
+  border: 2px solid var(--purple-200);
+  border-radius: 10px;
+  box-shadow: var(--box-shadow);
+  padding: 30px;
+  background-color: var(--white);
+}
