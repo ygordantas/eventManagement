@@ -4,6 +4,7 @@ import Input from "../../components/Input/Input";
 import classes from "./RegistrationPage.module.css";
 import { Link, useNavigate } from "react-router";
 import createClassName from "../../utils/createClassName";
+import useAuthContext from "../../hooks/useAuthContext";
 
 type RegistrationFormData = {
   firstName: string;
@@ -16,6 +17,7 @@ type RegistrationFormData = {
 
 export default function RegistrationPage() {
   const navigate = useNavigate();
+  const { register } = useAuthContext();
 
   const [formData, setFormData] = useState<RegistrationFormData>({
     firstName: "",
@@ -28,20 +30,25 @@ export default function RegistrationPage() {
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (localStorage.getItem(formData.email)) {
-      alert("User with provided email already exists.");
-      return;
-    }
-
-    const { confirmPassword, ...user } = formData;
-
-    if (confirmPassword !== user.password) {
+    if (formData.confirmPassword !== formData.password) {
       alert("Passwords do not match!");
       return;
     }
 
-    localStorage.setItem(user.email, JSON.stringify(user));
-    navigate("/");
+    try {
+      register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        dateOfBirth: formData.dateOfBirth!,
+      });
+      navigate("/");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : JSON.stringify(error);
+      alert(message);
+    }
   };
 
   const getMaxDate = useMemo(() => {
