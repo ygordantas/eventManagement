@@ -1,13 +1,8 @@
 import type { PropsWithChildren } from "react";
-import type User from "../models/User";
 import { Navigate } from "react-router";
+import useAuthContext from "../hooks/useAuthContext";
 
-type RouteGuardProps = {
-  loggedUser: User | null;
-};
-export default function RouteGuard({
-  loggedUser,
-  children,
-}: PropsWithChildren<RouteGuardProps>) {
+export default function RouteGuard({ children }: PropsWithChildren) {
+  const { loggedUser } = useAuthContext();
   return loggedUser ? children : <Navigate to={"/login"} replace />;
 }

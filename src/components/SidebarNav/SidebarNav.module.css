@@ -27,7 +27,7 @@
 
 .sidebarHeader {
   padding: 1rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--white-transparent);
   margin-bottom: 2rem;
   flex-shrink: 0;
 }
@@ -55,7 +55,7 @@
 }
 
 .navigation::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--white-transparent);
   border-radius: 3px;
 }
 
@@ -89,6 +89,7 @@
   font-weight: 500;
   position: relative;
   overflow: hidden;
+  gap: 12px;
 }
 
 .navLink::before {

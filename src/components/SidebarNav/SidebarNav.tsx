@@ -1,20 +1,48 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
+import FriendsIcon from "../../assets/icons/friends.svg";
+import HomeIconPath from "../../assets/icons/home.svg";
+import InboxIcon from "../../assets/icons/mail_icon.svg";
+import EventsIcon from "../../assets/icons/party.svg";
+import MyEventsIcon from "../../assets/icons/star.svg";
 import Backdrop from "../Backdrop/Backdrop";
 import classes from "./SidebarNav.module.css";
 
 type navItem = {
   label: string;
-  icon: React.ReactNode;
+  iconPath: string;
   path: string;
 };
 
-type SidebarProps = {
-  navItems: navItem[];
-  footer?: React.ReactNode;
-};
+const NAV_ITEMS: navItem[] = [
+  {
+    label: "Home",
+    iconPath: HomeIconPath,
+    path: "/",
+  },
+  {
+    label: "Events",
+    iconPath: EventsIcon,
+    path: "/events",
+  },
+  {
+    label: "Friends",
+    iconPath: FriendsIcon,
+    path: "/friends",
+  },
+  {
+    label: "My Events",
+    iconPath: MyEventsIcon,
+    path: "/my-events",
+  },
+  {
+    label: "Inbox",
+    iconPath: InboxIcon,
+    path: "/inbox",
+  },
+];
 
-export default function SidebarNav({ navItems, footer }: SidebarProps) {
+export default function SidebarNav() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -40,18 +68,22 @@ export default function SidebarNav({ navItems, footer }: SidebarProps) {
 
   return (
     <>
-      <Backdrop isOpen={isMobile && isOpen} onClose={() => setIsOpen(false)} />
+      {isMobile && (
+        <>
+          <Backdrop isOpen={isMobile && isOpen} onClose={() => setIsOpen(false)} />
 
-      <button
-        className={`${classes.toggleButton} ${isOpen ? classes.active : ""}`}
-        onClick={toggleSidebar}
-        aria-label={isOpen ? "Close sidebar" : "Open sidebar"}>
-        <span className={classes.hamburger}>
-          <span className={classes.line} />
-          <span className={classes.line} />
-          <span className={classes.line} />
-        </span>
-      </button>
+          <button
+            className={`${classes.toggleButton} ${isOpen ? classes.active : ""}`}
+            onClick={toggleSidebar}
+            aria-label={isOpen ? "Close sidebar" : "Open sidebar"}>
+            <span className={classes.hamburger}>
+              <span className={classes.line} />
+              <span className={classes.line} />
+              <span className={classes.line} />
+            </span>
+          </button>
+        </>
+      )}
 
       <aside className={`${classes.sidebar} ${isOpen ? classes.open : ""}`}>
         <div className={classes.sidebarContent}>
@@ -61,10 +93,10 @@ export default function SidebarNav({ navItems, footer }: SidebarProps) {
 
           <nav className={classes.navigation}>
             <ul className={classes.navList}>
-              {navItems.map((item) => (
+              {NAV_ITEMS.map((item) => (
                 <li className={classes.navItem} key={item.label}>
-                  <NavLink to={item.path} className={classes.navLink}>
-                    {item.icon}
+                  <NavLink onClick={() => isMobile && setIsOpen(false)} to={item.path} className={classes.navLink}>
+                    <img width={24} height={24} src={item.iconPath} alt={item.label} />
                     <span>{item.label}</span>
                   </NavLink>
                 </li>
@@ -72,7 +104,7 @@ export default function SidebarNav({ navItems, footer }: SidebarProps) {
             </ul>
           </nav>
 
-          {footer && <div className={classes.sidebarFooter}>{footer}</div>}
+          <div className={classes.sidebarFooter}>Logout</div>
         </div>
       </aside>
     </>
