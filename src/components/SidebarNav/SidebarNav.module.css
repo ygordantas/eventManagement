@@ -1,0 +1,249 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 280px;
+  background: linear-gradient(135deg, var(--purple-400) 0%, var(--purple-300) 100%);
+  color: var(--white);
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebarContent {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.sidebarHeader {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 2rem;
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--white);
+  text-align: center;
+}
+
+.navigation {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+  margin-right: -0.5rem;
+  margin-bottom: 1rem;
+}
+
+.navigation::-webkit-scrollbar {
+  width: 6px;
+}
+
+.navigation::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.navigation::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.navigation::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.navList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navItem {
+  margin-bottom: 0.5rem;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: var(--white);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.navLink::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--white-transparent), transparent);
+  transition: left 0.5s ease;
+}
+
+.navLink:hover::before {
+  left: 100%;
+}
+
+.navLink:hover {
+  background: var(--white-transparent);
+  transform: translateX(4px);
+}
+
+.navLink:active {
+  transform: translateX(2px);
+}
+
+.navIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.navLink span {
+  font-size: 0.95rem;
+}
+
+.sidebarFooter {
+  padding-top: 1rem;
+  border-top: 1px solid var(--white-transparent);
+  flex-shrink: 0;
+}
+
+.toggleButton {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1001;
+  background: var(--purple-300);
+  border: none;
+  border-radius: 8px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: var(--box-shadow);
+}
+
+.toggleButton:hover {
+  background: var(--purple-400);
+  transform: scale(1.05);
+}
+
+.toggleButton.active {
+  left: 300px;
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 20px;
+  height: 16px;
+  position: relative;
+}
+
+.line {
+  width: 100%;
+  height: 2px;
+  background: var(--white);
+  border-radius: 1px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.toggleButton.active .line:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.toggleButton.active .line:nth-child(2) {
+  opacity: 0;
+}
+
+.toggleButton.active .line:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+.navItem {
+  animation: slideInLeft 0.3s ease forwards;
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.toggleButton:focus,
+.navLink:focus {
+  outline: 2px solid var(--white);
+  outline-offset: 2px;
+}
+
+@keyframes slideInLeft {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100vw;
+    max-width: 320px;
+  }
+
+  .toggleButton.active {
+    left: 340px;
+  }
+
+  .navLink {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  .navIcon {
+    width: 24px;
+    height: 24px;
+    margin-right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100vw;
+  }
+
+  .toggleButton.active {
+    left: calc(100vw - 60px);
+  }
+
+  .sidebarContent {
+    padding: 1.5rem;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+  }
+}
