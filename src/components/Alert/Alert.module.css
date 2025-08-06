@@ -1,0 +1,84 @@
+.container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  width: 300px;
+  max-width: 80vw;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: var(--box-shadow);
+  border-width: 1px;
+  border-style: solid;
+  animation: slideIn 0.3s forwards;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 10px;
+  font-weight: 500;
+}
+
+.info {
+  background-color: var(--blue-100);
+  border-color: var(--blue-200);
+  color: var(--blue-300);
+}
+
+.warning {
+  background-color: var(--yellow-100);
+  border-color: var(--yellow-200);
+  color: var(--yellow-300);
+}
+
+.error {
+  background-color: var(--red-100);
+  border-color: var(--red-200);
+  color: var(--red-300);
+}
+
+.success {
+  background-color: var(--green-100);
+  border-color: var(--green-200);
+  color: var(--green-300);
+}
+
+.close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gray-300);
+}
+
+.slideOut {
+  animation: slideOut 0.3s ease-in forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+    display: block;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+    display: none;
+  }
+}

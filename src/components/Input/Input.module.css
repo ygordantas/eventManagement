@@ -45,14 +45,14 @@
 }
 
 .input_container span {
-  color: var(--red-100);
+  color: var(--red-300);
   font-size: 14px;
 }
 
 .input_container input.has_error {
-  border-bottom-color: var(--red-100);
+  border-bottom-color: var(--red-300);
 }
 
 .input_container input.has_error ~ label {
-  color: var(--red-100);
+  color: var(--red-300);
 }

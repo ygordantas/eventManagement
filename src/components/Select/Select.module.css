@@ -51,14 +51,14 @@
 }
 
 .select_container span {
-  color: var(--red-100);
+  color: var(--red-300);
   font-size: 14px;
 }
 
 .select_container select.has_error {
-  border-color: var(--red-100);
+  border-color: var(--red-300);
 }
 
 .select_container select.has_error ~ label {
-  color: var(--red-100);
+  color: var(--red-300);
 }

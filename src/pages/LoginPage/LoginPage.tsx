@@ -4,10 +4,12 @@ import Input from "../../components/Input/Input";
 import classes from "./LoginPage.module.css";
 import { Link, useNavigate } from "react-router";
 import useAuthContext from "../../hooks/useAuthContext";
+import useAlertContext from "../../hooks/useAlertContext";
 
 export default function LoginPage() {
   const { login } = useAuthContext();
   const navigate = useNavigate();
+  const { showErrorAlert } = useAlertContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +21,7 @@ export default function LoginPage() {
       navigate("/");
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : JSON.stringify(e);
-      alert(errorMessage);
+      showErrorAlert(errorMessage);
     }
   };
 

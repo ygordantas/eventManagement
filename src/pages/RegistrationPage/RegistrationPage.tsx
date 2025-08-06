@@ -5,6 +5,7 @@ import classes from "./RegistrationPage.module.css";
 import { Link, useNavigate } from "react-router";
 import createClassName from "../../utils/createClassName";
 import useAuthContext from "../../hooks/useAuthContext";
+import useAlertContext from "../../hooks/useAlertContext";
 
 type RegistrationFormData = {
   firstName: string;
@@ -18,6 +19,7 @@ type RegistrationFormData = {
 export default function RegistrationPage() {
   const navigate = useNavigate();
   const { register } = useAuthContext();
+  const { showErrorAlert } = useAlertContext();
 
   const [formData, setFormData] = useState<RegistrationFormData>({
     firstName: "",
@@ -30,11 +32,6 @@ export default function RegistrationPage() {
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (formData.confirmPassword !== formData.password) {
-      alert("Passwords do not match!");
-      return;
-    }
-
     try {
       register({
         firstName: formData.firstName,
@@ -45,9 +42,7 @@ export default function RegistrationPage() {
       });
       navigate("/");
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : JSON.stringify(error);
-      alert(message);
+      showErrorAlert(error);
     }
   };
 
