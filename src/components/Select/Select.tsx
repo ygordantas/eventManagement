@@ -1,15 +1,11 @@
 import { useRef, useState } from "react";
 import createClassName from "../../utils/createClassName";
 import classes from "./Select.module.css";
-
-type SelectOption = {
-  value: string | number;
-  label: string;
-};
+import type Option from "../../models/Option";
 
 type SelectProps = {
   label: string;
-  options: SelectOption[];
+  options: Option[];
 } & React.ComponentPropsWithoutRef<"select">;
 
 export default function Select({ label, options, ...props }: SelectProps) {
@@ -43,8 +39,8 @@ export default function Select({ label, options, ...props }: SelectProps) {
       >
         <option value="" hidden={remainingProps.required} />
         {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
+          <option key={opt.code} value={opt.code}>
+            {opt.value}
           </option>
         ))}
       </select>
