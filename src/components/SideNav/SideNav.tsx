@@ -80,7 +80,11 @@ export default function SideNav() {
             <ul className={classes.navList}>
               {NAV_ITEMS.map((item, i) => (
                 <li className={classes.navItem} key={i}>
-                  <NavLink className={classes.navLink} to={item.path}>
+                  <NavLink
+                    onClick={() => isMobile && setOpen(false)}
+                    className={classes.navLink}
+                    to={item.path}
+                  >
                     <img src={item.iconPath} />
                     <span>{item.label}</span>
                   </NavLink>
