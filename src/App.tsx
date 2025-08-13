@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import RegistrationPage from "./pages/RegistrationPage/RegistrationPage";
+import RegistrationPage from "./pages/Auth/RegistrationPage/RegistrationPage";
 import AuthLayout from "./components/AuthLayout/AuthLayout";
 import RouteGuard from "./components/RouteGuard";
 import Layout from "./components/Layout/Layout";
@@ -10,6 +9,7 @@ import FriendsPage from "./pages/FriendsPage/FriendsPage";
 import EventsPage from "./pages/EventsPage/EventsPage";
 import InboxPage from "./pages/InboxPage/InboxPage";
 import MyEventFormPage from "./pages/MyEventsPage/MyEventFormPage/MyEventFormPage";
+import LoginPage from "./pages/Auth/LoginPage/LoginPage";
 
 function App() {
   const authRoutes = (

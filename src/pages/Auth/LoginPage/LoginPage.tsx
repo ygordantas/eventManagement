@@ -1,10 +1,10 @@
 import { useState } from "react";
-import Button from "../../components/Button/Button";
-import Input from "../../components/Input/Input";
 import classes from "./LoginPage.module.css";
 import { Link, useNavigate } from "react-router";
-import useAuthContext from "../../hooks/useAuthContext";
-import useAlertContext from "../../hooks/useAlertContext";
+import Button from "../../../components/Button/Button";
+import Input from "../../../components/Input/Input";
+import useAlertContext from "../../../hooks/useAlertContext";
+import useAuthContext from "../../../hooks/useAuthContext";
 
 export default function LoginPage() {
   const { login } = useAuthContext();

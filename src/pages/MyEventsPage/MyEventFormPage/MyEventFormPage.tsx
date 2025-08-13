@@ -7,10 +7,10 @@ import DRESS_CODE_TYPES from "../../../data/dressCodeTypes";
 import TIMEZONES from "../../../data/timezones";
 import Textarea from "../../../components/Textarea/Textarea";
 import { getDateOnlyString } from "../../../utils/dateUtils";
-import EVENTS from "../../../data/events";
 import useAuthContext from "../../../hooks/useAuthContext";
 import { useNavigate } from "react-router";
 import useAlertContext from "../../../hooks/useAlertContext";
+import eventServices from "../../../services/eventServices";
 
 const TODAY = new Date();
 
@@ -53,10 +53,10 @@ export default function MyEventFormPage() {
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    EVENTS.push({
+    eventServices.createEvent({
       ...formData,
       id: crypto.randomUUID(),
-      createdBy: `${user!.firstName} ${user!.lastName}`,
+      createdBy: user!.id,
       createdAt: TODAY,
     });
 

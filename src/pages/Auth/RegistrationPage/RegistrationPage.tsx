@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
-import Button from "../../components/Button/Button";
-import Input from "../../components/Input/Input";
+import Button from "../../../components/Button/Button";
+import Input from "../../../components/Input/Input";
 import classes from "./RegistrationPage.module.css";
 import { Link, useNavigate } from "react-router";
-import createClassName from "../../utils/createClassName";
-import useAuthContext from "../../hooks/useAuthContext";
-import useAlertContext from "../../hooks/useAlertContext";
-import { getDateOnlyString } from "../../utils/dateUtils";
+import createClassName from "../../../utils/createClassName";
+import useAuthContext from "../../../hooks/useAuthContext";
+import useAlertContext from "../../../hooks/useAlertContext";
+import { getDateOnlyString } from "../../../utils/dateUtils";
 
 type RegistrationFormData = {
   firstName: string;
@@ -35,6 +35,7 @@ export default function RegistrationPage() {
 
     try {
       register({
+        id: crypto.randomUUID(),
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
