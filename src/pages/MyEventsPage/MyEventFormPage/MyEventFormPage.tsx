@@ -3,31 +3,43 @@ import Button from "../../../components/Button/Button";
 import Input from "../../../components/Input/Input";
 import Select from "../../../components/Select/Select";
 import classes from "./MyEventFormPage.module.css";
-import EVENT_TYPES from "../../../data/eventTypes";
 import DRESS_CODE_TYPES from "../../../data/dressCodeTypes";
+import TIMEZONES from "../../../data/timezones";
+import Textarea from "../../../components/Textarea/Textarea";
+import { getDate } from "../../../utils/dateUtils";
+
+const TODAY = new Date();
 
 type EventFormData = {
-  evenTypeCode: string;
+  name: string;
+  isOnline: boolean;
+  isPrivate: boolean;
   date: string;
   time: string;
-  timezone: string;
+  timezoneCode: string;
   address: string;
   dressCode?: string;
   entrancePrice?: number;
   maxCapacity?: number;
   minPeopleRequired?: number;
+  description?: string;
 };
 
 export default function MyEventFormPage() {
   const [formData, setFormData] = useState<EventFormData>({
-    evenTypeCode: "",
+    name: "",
+    isOnline: false,
+    isPrivate: false,
     date: "",
     time: "",
-    timezone: "",
+    timezoneCode: "",
     address: "",
   });
 
-  const onSubmitHandler = () => {};
+  const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(JSON.stringify(formData));
+  };
 
   return (
     <section className={classes.container}>
@@ -36,24 +48,49 @@ export default function MyEventFormPage() {
         <form onSubmit={onSubmitHandler} className={classes.form}>
           <div className={classes.section}>
             <h2 className={classes.sectionTitle}>Event Details</h2>
-            <Select
-              label="Event Type"
+
+            <Input
+              required
+              label="Event Name"
+              value={formData.name}
               onChange={(e) => {
                 setFormData((prev) => ({
                   ...prev,
-                  evenTypeCode: e.target.value,
+                  name: e.target.value,
                 }));
               }}
-              value={formData.evenTypeCode}
-              options={EVENT_TYPES}
-              required
             />
 
+            <div className={classes.checkboxGroup}>
+              <Input
+                type="checkbox"
+                label="Make it an online event"
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    isOnline: e.target.checked,
+                    address: "",
+                  }));
+                }}
+                checked={formData.isOnline}
+              />
+
+              <Input
+                type="checkbox"
+                label="Make it a private event"
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    isPrivate: e.target.checked,
+                  }));
+                }}
+                checked={formData.isPrivate}
+              />
+            </div>
+
             <Input
-              label={
-                formData.evenTypeCode === "online" ? "Link URL" : "Address"
-              }
-              type="text"
+              label={formData.isOnline ? "Link URL" : "Address"}
+              type={formData.isOnline ? "url" : "text"}
               value={formData.address ?? ""}
               onChange={(e) => {
                 setFormData((prev) => ({
@@ -69,6 +106,7 @@ export default function MyEventFormPage() {
               <Input
                 label="Date"
                 type="date"
+                min={getDate(TODAY)}
                 required
                 value={formData.date}
                 onChange={(e) => {
@@ -92,7 +130,19 @@ export default function MyEventFormPage() {
               />
             </div>
 
-            <Select label="Timezone" required options={[]} />
+            <Select
+              label="Timezone"
+              value={formData.timezoneCode}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  timezoneCode: e.target.value,
+                }))
+              }
+              required
+              options={TIMEZONES}
+            />
+
             <Select
               label="Dress Code"
               value={formData.dressCode ?? ""}
@@ -120,6 +170,19 @@ export default function MyEventFormPage() {
                 }));
               }}
             />
+
+            <div className={classes.descriptionContainer}>
+              <Textarea
+                label={"Description"}
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+              />
+            </div>
           </div>
 
           <div className={classes.section}>

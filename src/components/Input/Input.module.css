@@ -56,3 +56,43 @@
 .input_container input.has_error ~ label {
   color: var(--red-300);
 }
+
+/* Checkbox specific styles */
+.input_container input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: white;
+  outline: none;
+  padding: 0;
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+.input_container input[type="checkbox"] ~ label {
+  position: static;
+  color: var(--gray-100);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.input_container input[type="checkbox"]:focus ~ label {
+  color: var(--purple-200);
+}
+
+.input_container input[type="checkbox"]:checked {
+  accent-color: var(--purple-200);
+}
+
+/* Container adjustments for checkbox */
+.input_container:has(input[type="checkbox"]) {
+  margin: 10px auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}

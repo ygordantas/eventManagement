@@ -49,10 +49,26 @@
   border-bottom: 2px solid #cbd5e0;
 }
 
+.checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+}
+
+.descriptionContainer {
+  width: 100%;
+  margin-left: -15px;
 }
 
 @media (max-width: 768px) {

@@ -1,0 +1,68 @@
+.textarea_container {
+  position: relative;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.textarea_container textarea {
+  font-size: 20px;
+  width: 100%;
+  min-height: 120px;
+  border: 2px solid var(--purple-200);
+  border-radius: 8px;
+  background-color: transparent;
+  outline: none;
+  padding: 12px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color 0.3s ease;
+}
+
+.textarea_container label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: var(--gray-100);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.textarea_container textarea:focus ~ label,
+.textarea_container textarea:not(:placeholder-shown) ~ label,
+.textarea_container textarea:disabled ~ label {
+  top: -23px;
+  left: 2px;
+  font-size: 16px;
+}
+
+.textarea_container textarea:focus {
+  border-color: var(--purple-200);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.textarea_container textarea:focus ~ label {
+  color: var(--purple-200);
+}
+
+.textarea_container textarea:disabled {
+  border-color: var(--gray-200);
+  border-radius: 10px;
+  background-color: var(--gray-200);
+  color: var(--black);
+  cursor: not-allowed;
+  padding: 5px;
+}
+
+.textarea_container span {
+  color: var(--red-300);
+  font-size: 14px;
+}
+
+.textarea_container textarea.has_error {
+  border-bottom-color: var(--red-300);
+}
+
+.textarea_container textarea.has_error ~ label {
+  color: var(--red-300);
+}
