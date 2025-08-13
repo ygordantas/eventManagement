@@ -1,1 +1,2 @@
-export const getDate = (date: Date): string => date.toISOString().split("T")[0];
+export const getDateOnlyString = (date?: Date): string =>
+  date ? date.toISOString().split("T")[0] : "";

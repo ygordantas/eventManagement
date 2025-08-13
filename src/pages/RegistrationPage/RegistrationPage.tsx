@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router";
 import createClassName from "../../utils/createClassName";
 import useAuthContext from "../../hooks/useAuthContext";
 import useAlertContext from "../../hooks/useAlertContext";
+import { getDateOnlyString } from "../../utils/dateUtils";
 
 type RegistrationFormData = {
   firstName: string;
@@ -135,11 +136,7 @@ export default function RegistrationPage() {
           type="date"
           max={getMaxDate}
           label="Date of birth"
-          value={
-            formData.dateOfBirth
-              ? formData.dateOfBirth.toISOString().split("T")[0]
-              : ""
-          }
+          value={getDateOnlyString(formData.dateOfBirth)}
           onChange={(e) => {
             setFormData((prev) => ({
               ...prev,

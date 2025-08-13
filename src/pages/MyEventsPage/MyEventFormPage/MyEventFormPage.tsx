@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Button from "../../../components/Button/Button";
 import Input from "../../../components/Input/Input";
 import Select from "../../../components/Select/Select";
@@ -6,7 +6,11 @@ import classes from "./MyEventFormPage.module.css";
 import DRESS_CODE_TYPES from "../../../data/dressCodeTypes";
 import TIMEZONES from "../../../data/timezones";
 import Textarea from "../../../components/Textarea/Textarea";
-import { getDate } from "../../../utils/dateUtils";
+import { getDateOnlyString } from "../../../utils/dateUtils";
+import EVENTS from "../../../data/events";
+import useAuthContext from "../../../hooks/useAuthContext";
+import { useNavigate } from "react-router";
+import useAlertContext from "../../../hooks/useAlertContext";
 
 const TODAY = new Date();
 
@@ -26,6 +30,10 @@ type EventFormData = {
 };
 
 export default function MyEventFormPage() {
+  const { user } = useAuthContext();
+  const { showSuccessAlert } = useAlertContext();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState<EventFormData>({
     name: "",
     isOnline: false,
@@ -36,9 +44,25 @@ export default function MyEventFormPage() {
     address: "",
   });
 
+  const getMinDate = useMemo(() => {
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() - 1);
+    return getDateOnlyString(minDate);
+  }, []);
+
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(JSON.stringify(formData));
+
+    EVENTS.push({
+      ...formData,
+      id: crypto.randomUUID(),
+      createdBy: `${user!.firstName} ${user!.lastName}`,
+      createdAt: TODAY,
+    });
+
+    showSuccessAlert("Event created successfully!");
+
+    navigate("/my-events");
   };
 
   return (
@@ -106,7 +130,7 @@ export default function MyEventFormPage() {
               <Input
                 label="Date"
                 type="date"
-                min={getDate(TODAY)}
+                min={getMinDate}
                 required
                 value={formData.date}
                 onChange={(e) => {
