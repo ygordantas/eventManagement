@@ -1,26 +1,15 @@
-import { useRef, useState } from "react";
 import createClassName from "../../utils/createClassName";
 import classes from "./Input.module.css";
+import useFormElementValidation from "../../hooks/useFormElementValidation";
 
 type InputProps = {
   label: string;
 } & React.ComponentPropsWithoutRef<"input">;
 
 export default function Input({ label, ...props }: InputProps) {
-  const ref = useRef<HTMLInputElement>(null);
-  const [errorMessage, setErrorMessage] = useState("");
-
+  const { ref, errorMessage, onBlurHandler } =
+    useFormElementValidation<HTMLInputElement>();
   const { className, onBlur, placeholder, id, name, ...remainingProps } = props;
-
-  const onBlurHandler = (e: React.FocusEvent<HTMLInputElement, Element>) => {
-    onBlur?.(e);
-
-    const input = ref.current;
-
-    if (!input) return;
-
-    setErrorMessage(input.checkValidity() ? "" : input.validationMessage);
-  };
 
   return (
     <div className={createClassName(className, classes.input_container)}>
@@ -28,7 +17,7 @@ export default function Input({ label, ...props }: InputProps) {
         ref={ref}
         id={id ?? label}
         name={name ?? label}
-        onBlur={onBlurHandler}
+        onBlur={(e) => onBlurHandler(e, onBlur)}
         placeholder={placeholder ? " " : " "}
         className={createClassName(
           classes.input,

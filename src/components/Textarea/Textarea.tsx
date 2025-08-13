@@ -1,26 +1,16 @@
-import { useRef, useState } from "react";
 import createClassName from "../../utils/createClassName";
 import classes from "./Textarea.module.css";
+import useFormElementValidation from "../../hooks/useFormElementValidation";
 
 type TextareaProps = {
   label: string;
 } & React.ComponentPropsWithoutRef<"textarea">;
 
 export default function Textarea({ label, ...props }: TextareaProps) {
-  const ref = useRef<HTMLTextAreaElement>(null);
-  const [errorMessage, setErrorMessage] = useState("");
+  const { ref, errorMessage, onBlurHandler } =
+    useFormElementValidation<HTMLTextAreaElement>();
 
   const { className, onBlur, placeholder, id, name, ...remainingProps } = props;
-
-  const onBlurHandler = (e: React.FocusEvent<HTMLTextAreaElement, Element>) => {
-    onBlur?.(e);
-
-    const input = ref.current;
-
-    if (!input) return;
-
-    setErrorMessage(input.checkValidity() ? "" : input.validationMessage);
-  };
 
   return (
     <div className={createClassName(className, classes.textarea_container)}>
@@ -28,7 +18,7 @@ export default function Textarea({ label, ...props }: TextareaProps) {
         ref={ref}
         id={id ?? label}
         name={name ?? label}
-        onBlur={onBlurHandler}
+        onBlur={(e) => onBlurHandler(e, onBlur)}
         placeholder={placeholder ? " " : " "}
         className={createClassName(
           classes.textarea,
