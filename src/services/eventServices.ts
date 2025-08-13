@@ -14,6 +14,11 @@ const eventServices = {
   createEvent: (newEvent: EventModel): void => {
     EVENTS.push(newEvent);
   },
+  deleteEvent: (eventId: string): void => {
+    const eventIndex = EVENTS.findIndex((e) => e.id === eventId);
+
+    EVENTS.splice(eventIndex, 1);
+  },
 };
 
 export default eventServices;

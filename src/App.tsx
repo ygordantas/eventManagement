@@ -34,7 +34,7 @@ function App() {
 
       <Route path="my-events">
         <Route index element={<MyEventsPage />} />
-        <Route path="manage" element={<MyEventFormPage />} />
+        <Route path="manage/:eventId?" element={<MyEventFormPage />} />
       </Route>
     </Route>
   );
