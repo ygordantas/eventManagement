@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Button from "../../../components/Button/Button";
 import Input from "../../../components/Input/Input";
 import Select from "../../../components/Select/Select";
@@ -8,7 +8,7 @@ import TIMEZONES from "../../../data/timezones";
 import Textarea from "../../../components/Textarea/Textarea";
 import { getDateOnlyString } from "../../../utils/dateUtils";
 import useAuthContext from "../../../hooks/useAuthContext";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import useAlertContext from "../../../hooks/useAlertContext";
 import eventServices from "../../../services/eventServices";
 
@@ -31,7 +31,8 @@ type EventFormData = {
 
 export default function MyEventFormPage() {
   const { user } = useAuthContext();
-  const { showSuccessAlert } = useAlertContext();
+  const { showSuccessAlert, showErrorAlert } = useAlertContext();
+  const { eventId } = useParams();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<EventFormData>({
@@ -43,6 +44,22 @@ export default function MyEventFormPage() {
     timezoneCode: "",
     address: "",
   });
+
+  useEffect(() => {
+    if (eventId) {
+      const response = eventServices.getEventById(eventId);
+
+      if (!response) {
+        showErrorAlert("Event with id provided was not found");
+        navigate("/my-events");
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, createdAt, createdBy, ...form } = response;
+
+      setFormData(form);
+    }
+  }, [eventId, navigate, showErrorAlert]);
 
   const getMinDate = useMemo(() => {
     const minDate = new Date();
@@ -68,7 +85,9 @@ export default function MyEventFormPage() {
   return (
     <section className={classes.container}>
       <div className={classes.formWrapper}>
-        <h1 className={classes.title}>Create your event</h1>
+        <h1 className={classes.title}>
+          {eventId ? "Edit" : "Create"} your event
+        </h1>
         <form onSubmit={onSubmitHandler} className={classes.form}>
           <div className={classes.section}>
             <h2 className={classes.sectionTitle}>Event Details</h2>
