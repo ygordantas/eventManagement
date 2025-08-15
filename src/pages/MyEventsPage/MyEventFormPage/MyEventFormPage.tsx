@@ -70,14 +70,18 @@ export default function MyEventFormPage() {
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    eventServices.createEvent({
-      ...formData,
-      id: crypto.randomUUID(),
-      createdBy: user!.id,
-      createdAt: TODAY,
-    });
+    if (eventId) {
+      eventServices.updateEvent(eventId, formData);
+    } else {
+      eventServices.createEvent({
+        ...formData,
+        id: crypto.randomUUID(),
+        createdBy: user!.id,
+        createdAt: TODAY,
+      });
+    }
 
-    showSuccessAlert("Event created successfully!");
+    showSuccessAlert(`Event ${eventId ? "updated" : "created"} successfully!`);
 
     navigate("/my-events");
   };
@@ -264,7 +268,7 @@ export default function MyEventFormPage() {
 
           <div className={classes.buttonContainer}>
             <Button type="submit" variant="solid">
-              Create Event
+              {eventId ? "Update" : "Create"} Event
             </Button>
           </div>
         </form>
