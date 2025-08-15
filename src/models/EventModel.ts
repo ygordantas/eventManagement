@@ -7,8 +7,9 @@ export default interface EventModel {
   time: string;
   timezoneCode: string;
   address: string;
-  createdAt: Date;
   createdBy: string;
+  createdAt: Date;
+  updatedAt?: Date;
   dressCode?: string;
   entrancePrice?: number;
   maxCapacity?: number;

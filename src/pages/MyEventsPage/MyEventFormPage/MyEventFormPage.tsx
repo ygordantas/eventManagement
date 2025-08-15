@@ -44,20 +44,33 @@ export default function MyEventFormPage() {
     timezoneCode: "",
     address: "",
   });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (eventId) {
-      const response = eventServices.getEventById(eventId);
+    const getEventDetails = async () => {
+      try {
+        setIsLoading(true);
 
-      if (!response) {
-        showErrorAlert("Event with id provided was not found");
-        navigate("/my-events");
+        const response = await eventServices.getEventById(eventId!);
+
+        if (!response) {
+          showErrorAlert("Event with id provided was not found");
+          navigate("/my-events");
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, createdAt, createdBy, ...form } = response;
+
+        setFormData(form);
+      } catch (error) {
+        showErrorAlert(error);
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { id, createdAt, createdBy, ...form } = response;
-
-      setFormData(form);
+    if (eventId) {
+      getEventDetails();
     }
   }, [eventId, navigate, showErrorAlert]);
 
@@ -67,212 +80,227 @@ export default function MyEventFormPage() {
     return getDateOnlyString(minDate);
   }, []);
 
-  const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (eventId) {
-      eventServices.updateEvent(eventId, formData);
-    } else {
-      eventServices.createEvent({
-        ...formData,
-        id: crypto.randomUUID(),
-        createdBy: user!.id,
-        createdAt: TODAY,
-      });
+    try {
+      setIsLoading(true);
+
+      if (eventId) {
+        await eventServices.updateEvent(eventId, {
+          ...formData,
+          updatedAt: TODAY,
+        });
+      } else {
+        await eventServices.createEvent({
+          ...formData,
+          createdBy: user!.id,
+          createdAt: TODAY,
+        });
+      }
+      showSuccessAlert(
+        `Event ${eventId ? "updated" : "created"} successfully!`
+      );
+
+      navigate("/my-events");
+    } catch (error) {
+      showErrorAlert(error);
+    } finally {
+      setIsLoading(false);
     }
-
-    showSuccessAlert(`Event ${eventId ? "updated" : "created"} successfully!`);
-
-    navigate("/my-events");
   };
 
   return (
     <section className={classes.container}>
-      <div className={classes.formWrapper}>
-        <h1 className={classes.title}>
-          {eventId ? "Edit" : "Create"} your event
-        </h1>
-        <form onSubmit={onSubmitHandler} className={classes.form}>
-          <div className={classes.section}>
-            <h2 className={classes.sectionTitle}>Event Details</h2>
-
-            <Input
-              required
-              label="Event Name"
-              value={formData.name}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  name: e.target.value,
-                }));
-              }}
-            />
-
-            <div className={classes.checkboxGroup}>
-              <Input
-                type="checkbox"
-                label="Make it an online event"
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    isOnline: e.target.checked,
-                    address: "",
-                  }));
-                }}
-                checked={formData.isOnline}
-              />
+      {isLoading ? (
+        "Loading..."
+      ) : (
+        <div className={classes.formWrapper}>
+          <h1 className={classes.title}>
+            {eventId ? "Edit" : "Create"} your event
+          </h1>
+          <form onSubmit={onSubmitHandler} className={classes.form}>
+            <div className={classes.section}>
+              <h2 className={classes.sectionTitle}>Event Details</h2>
 
               <Input
-                type="checkbox"
-                label="Make it a private event"
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    isPrivate: e.target.checked,
-                  }));
-                }}
-                checked={formData.isPrivate}
-              />
-            </div>
-
-            <Input
-              label={formData.isOnline ? "Link URL" : "Address"}
-              type={formData.isOnline ? "url" : "text"}
-              value={formData.address ?? ""}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  address: e.target.value,
-                }));
-              }}
-              required
-              placeholder="Enter event address"
-            />
-
-            <div className={classes.row}>
-              <Input
-                label="Date"
-                type="date"
-                min={getMinDate}
                 required
-                value={formData.date}
+                label="Event Name"
+                value={formData.name}
                 onChange={(e) => {
                   setFormData((prev) => ({
                     ...prev,
-                    date: e.target.value,
+                    name: e.target.value,
                   }));
                 }}
               />
+
+              <div className={classes.checkboxGroup}>
+                <Input
+                  type="checkbox"
+                  label="Make it an online event"
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      isOnline: e.target.checked,
+                      address: "",
+                    }));
+                  }}
+                  checked={formData.isOnline}
+                />
+
+                <Input
+                  type="checkbox"
+                  label="Make it a private event"
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      isPrivate: e.target.checked,
+                    }));
+                  }}
+                  checked={formData.isPrivate}
+                />
+              </div>
+
               <Input
-                label="Time"
-                type="time"
-                required
-                value={formData.time}
+                label={formData.isOnline ? "Link URL" : "Address"}
+                type={formData.isOnline ? "url" : "text"}
+                value={formData.address ?? ""}
                 onChange={(e) => {
                   setFormData((prev) => ({
                     ...prev,
-                    time: e.target.value,
+                    address: e.target.value,
                   }));
                 }}
+                required
+                placeholder="Enter event address"
               />
-            </div>
 
-            <Select
-              label="Timezone"
-              value={formData.timezoneCode}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  timezoneCode: e.target.value,
-                }))
-              }
-              required
-              options={TIMEZONES}
-            />
+              <div className={classes.row}>
+                <Input
+                  label="Date"
+                  type="date"
+                  min={getMinDate}
+                  required
+                  value={formData.date}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      date: e.target.value,
+                    }));
+                  }}
+                />
+                <Input
+                  label="Time"
+                  type="time"
+                  required
+                  value={formData.time}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      time: e.target.value,
+                    }));
+                  }}
+                />
+              </div>
 
-            <Select
-              label="Dress Code"
-              value={formData.dressCode ?? ""}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  dressCode: e.target.value,
-                }));
-              }}
-              options={DRESS_CODE_TYPES}
-            />
-
-            <Input
-              label="Entrance Price"
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="0.00"
-              value={formData.entrancePrice ?? ""}
-              onChange={(e) => {
-                const entryValue = e.target.value;
-                setFormData((prev) => ({
-                  ...prev,
-                  entrancePrice: entryValue ? Number(entryValue) : undefined,
-                }));
-              }}
-            />
-
-            <div className={classes.descriptionContainer}>
-              <Textarea
-                label={"Description"}
-                value={formData.description}
+              <Select
+                label="Timezone"
+                value={formData.timezoneCode}
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    description: e.target.value,
+                    timezoneCode: e.target.value,
                   }))
                 }
+                required
+                options={TIMEZONES}
               />
-            </div>
-          </div>
 
-          <div className={classes.section}>
-            <h2 className={classes.sectionTitle}>Capacity</h2>
-            <div className={classes.row}>
+              <Select
+                label="Dress Code"
+                value={formData.dressCode ?? ""}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    dressCode: e.target.value,
+                  }));
+                }}
+                options={DRESS_CODE_TYPES}
+              />
+
               <Input
-                label="Maximum Capacity"
+                label="Entrance Price"
                 type="number"
-                min="1"
-                value={formData.maxCapacity ?? ""}
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                value={formData.entrancePrice ?? ""}
                 onChange={(e) => {
                   const entryValue = e.target.value;
                   setFormData((prev) => ({
                     ...prev,
-                    maxCapacity: entryValue ? Number(entryValue) : undefined,
+                    entrancePrice: entryValue ? Number(entryValue) : undefined,
                   }));
                 }}
               />
-              <Input
-                label="Minimum Attendance"
-                type="number"
-                min="1"
-                value={formData.minPeopleRequired ?? ""}
-                onChange={(e) => {
-                  const entryValue = e.target.value;
-                  setFormData((prev) => ({
-                    ...prev,
-                    minPeopleRequired: entryValue
-                      ? Number(entryValue)
-                      : undefined,
-                  }));
-                }}
-              />
-            </div>
-          </div>
 
-          <div className={classes.buttonContainer}>
-            <Button type="submit" variant="solid">
-              {eventId ? "Update" : "Create"} Event
-            </Button>
-          </div>
-        </form>
-      </div>
+              <div className={classes.descriptionContainer}>
+                <Textarea
+                  label={"Description"}
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className={classes.section}>
+              <h2 className={classes.sectionTitle}>Capacity</h2>
+              <div className={classes.row}>
+                <Input
+                  label="Maximum Capacity"
+                  type="number"
+                  min="1"
+                  value={formData.maxCapacity ?? ""}
+                  onChange={(e) => {
+                    const entryValue = e.target.value;
+                    setFormData((prev) => ({
+                      ...prev,
+                      maxCapacity: entryValue ? Number(entryValue) : undefined,
+                    }));
+                  }}
+                />
+                <Input
+                  label="Minimum Attendance"
+                  type="number"
+                  min="1"
+                  value={formData.minPeopleRequired ?? ""}
+                  onChange={(e) => {
+                    const entryValue = e.target.value;
+                    setFormData((prev) => ({
+                      ...prev,
+                      minPeopleRequired: entryValue
+                        ? Number(entryValue)
+                        : undefined,
+                    }));
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className={classes.buttonContainer}>
+              <Button type="submit" variant="solid">
+                {eventId ? "Update" : "Create"} Event
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
     </section>
   );
 }

@@ -3,20 +3,53 @@ import useAuthContext from "../../hooks/useAuthContext";
 import classes from "./MyEventsPage.module.css";
 import Button from "../../components/Button/Button";
 import { Link } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type EventModel from "../../models/EventModel";
+import useAlertContext from "../../hooks/useAlertContext";
 
 export default function MyEventsPage() {
   const { user } = useAuthContext();
-  const [myEvents, setMyEvents] = useState(
-    eventServices.getUserEvents(user!.id)
-  );
+  const { showErrorAlert } = useAlertContext();
+  const [myEvents, setMyEvents] = useState<EventModel[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const onDeleteEventHandler = (eventId: string): void => {
-    eventServices.deleteEvent(eventId);
-    setMyEvents((prev) => prev.filter((e) => e.id !== eventId));
+  useEffect(() => {
+    const getMyEvents = async () => {
+      try {
+        const events = await eventServices.getUserEvents(user!.id);
+
+        setMyEvents(
+          events.sort(
+            (a, b) =>
+              new Date(a.date).getMilliseconds() -
+              new Date(b.date).getMilliseconds()
+          )
+        );
+      } catch (error) {
+        showErrorAlert(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getMyEvents();
+  }, [showErrorAlert, user]);
+
+  const onDeleteEventHandler = async (eventId: string): Promise<void> => {
+    try {
+      setIsLoading(true);
+      await eventServices.deleteEvent(eventId);
+      setMyEvents((prev) => prev.filter((e) => e.id !== eventId));
+    } catch (error) {
+      showErrorAlert(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  return (
+  return isLoading ? (
+    "Loading..."
+  ) : (
     <div className={classes.container}>
       <div className={classes.header}>
         <h1 className={classes.title}>My Events</h1>
