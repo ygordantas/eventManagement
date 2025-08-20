@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
+  useEmulators: import.meta.env.DEV,
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
@@ -12,4 +13,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-export const database = getFirestore(app);
+const database = getFirestore(app);
+
+if (firebaseConfig.useEmulators) {
+  connectFirestoreEmulator(database, "localhost", 8080);
+}
+
+export { database };
