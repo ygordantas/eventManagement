@@ -14,10 +14,10 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      login(email, password);
+      await login(email, password);
       navigate("/");
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : JSON.stringify(e);

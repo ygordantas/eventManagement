@@ -30,12 +30,11 @@ export default function RegistrationPage() {
     confirmPassword: "",
   });
 
-  const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      register({
-        id: crypto.randomUUID(),
+      await register({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,

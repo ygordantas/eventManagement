@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type EventModel from "../../models/EventModel";
-import eventServices from "../../services/eventServices";
+import eventsServices from "../../services/eventsServices";
 import useAlertContext from "../../hooks/useAlertContext";
 
 export default function EventsPage() {
@@ -11,7 +11,7 @@ export default function EventsPage() {
   useEffect(() => {
     const getUpcomingEvents = async () => {
       try {
-        const events = await eventServices.getAllEvents();
+        const events = await eventsServices.getAllEvents();
         setUpcomingEvents(
           events.sort(
             (a, b) =>

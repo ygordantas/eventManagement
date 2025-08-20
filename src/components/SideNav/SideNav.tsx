@@ -93,7 +93,11 @@ export default function SideNav() {
             </ul>
           </nav>
           <div className={classes.footer}>
-            <Link className={classes.navLink} onClick={logout} to={"/login"}>
+            <Link
+              className={classes.navLink}
+              onClick={async () => await logout()}
+              to={"/login"}
+            >
               <img src={LogoutIcon} /> <span>Logout</span>
             </Link>
           </div>

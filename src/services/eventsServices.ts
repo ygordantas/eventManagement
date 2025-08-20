@@ -14,7 +14,7 @@ import {
 
 const EVENTS_COLLECTION = collection(database, "events");
 
-const eventServices = {
+const eventsServices = {
   getAllEvents: async (): Promise<EventModel[]> => {
     const snapshot = await getDocs(EVENTS_COLLECTION);
 
@@ -59,4 +59,4 @@ const eventServices = {
   },
 };
 
-export default eventServices;
+export default eventsServices;

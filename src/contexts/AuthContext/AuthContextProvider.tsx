@@ -1,38 +1,70 @@
 import { type PropsWithChildren, useCallback, useState } from "react";
-import type User from "../../models/User";
 import AuthContext from "./AuthContext";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import { auth } from "../../firebase";
+import usersServices from "../../services/usersServices";
+import type AppUser from "../../models/AppUser";
+import type UserDetails from "../../models/UserDetails";
 
 const AuthContextProvider = ({ children }: PropsWithChildren) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
 
-  const login = useCallback((email: string, password: string) => {
-    const response = localStorage.getItem(email);
+  const login = useCallback(async (email: string, password: string) => {
+    const { user } = await signInWithEmailAndPassword(auth, email, password);
 
-    if (!response) {
-      throw new Error("User not found");
+    try {
+      const userDetails = await usersServices.getUserDetailsById(user.uid);
+
+      if (!userDetails) throw new Error("User details not found.");
+
+      setUser({
+        id: user.uid,
+        email,
+        ...userDetails,
+      } as AppUser);
+    } catch (error) {
+      await signOut(auth);
+      throw error;
     }
-
-    const user: User = JSON.parse(response!);
-
-    if (user.password !== password) {
-      throw new Error("Incorrect password.");
-    }
-
-    setUser(user);
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    await signOut(auth);
     setUser(null);
   }, []);
 
-  const register = useCallback((user: User) => {
-    if (localStorage.getItem(user.email)) {
-      throw new Error("User with provided email already exists.");
-    }
+  const register = useCallback(
+    async (newUser: Omit<AppUser, "id"> & { password: string }) => {
+      const { email, password, ...userDetails } = newUser;
 
-    setUser(user);
-    localStorage.setItem(user.email, JSON.stringify(user));
-  }, []);
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      try {
+        await usersServices.createUserDetails(
+          user.uid,
+          userDetails as UserDetails
+        );
+
+        setUser({
+          id: user.uid,
+          email,
+          ...userDetails,
+        } as AppUser);
+      } catch (error) {
+        await auth.currentUser?.delete();
+        throw error;
+      }
+    },
+    []
+  );
 
   return (
     <AuthContext.Provider

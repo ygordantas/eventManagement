@@ -10,7 +10,7 @@ import { getDateOnlyString } from "../../../utils/dateUtils";
 import useAuthContext from "../../../hooks/useAuthContext";
 import { useNavigate, useParams } from "react-router";
 import useAlertContext from "../../../hooks/useAlertContext";
-import eventServices from "../../../services/eventServices";
+import eventsServices from "../../../services/eventsServices";
 
 const TODAY = new Date();
 
@@ -51,7 +51,7 @@ export default function MyEventFormPage() {
       try {
         setIsLoading(true);
 
-        const response = await eventServices.getEventById(eventId!);
+        const response = await eventsServices.getEventById(eventId!);
 
         if (!response) {
           showErrorAlert("Event with id provided was not found");
@@ -87,12 +87,12 @@ export default function MyEventFormPage() {
       setIsLoading(true);
 
       if (eventId) {
-        await eventServices.updateEvent(eventId, {
+        await eventsServices.updateEvent(eventId, {
           ...formData,
           updatedAt: TODAY,
         });
       } else {
-        await eventServices.createEvent({
+        await eventsServices.createEvent({
           ...formData,
           createdBy: user!.id,
           createdAt: TODAY,

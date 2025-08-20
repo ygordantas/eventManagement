@@ -1,4 +1,4 @@
-import eventServices from "../../services/eventServices";
+import eventsServices from "../../services/eventsServices";
 import useAuthContext from "../../hooks/useAuthContext";
 import classes from "./MyEventsPage.module.css";
 import Button from "../../components/Button/Button";
@@ -16,7 +16,7 @@ export default function MyEventsPage() {
   useEffect(() => {
     const getMyEvents = async () => {
       try {
-        const events = await eventServices.getUserEvents(user!.id);
+        const events = await eventsServices.getUserEvents(user!.id);
 
         setMyEvents(
           events.sort(
@@ -38,7 +38,7 @@ export default function MyEventsPage() {
   const onDeleteEventHandler = async (eventId: string): Promise<void> => {
     try {
       setIsLoading(true);
-      await eventServices.deleteEvent(eventId);
+      await eventsServices.deleteEvent(eventId);
       setMyEvents((prev) => prev.filter((e) => e.id !== eventId));
     } catch (error) {
       showErrorAlert(error);
