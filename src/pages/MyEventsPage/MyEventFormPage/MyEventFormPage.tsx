@@ -59,7 +59,7 @@ export default function MyEventFormPage() {
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, createdAt, createdBy, ...form } = response;
+        const { id, createdAt, createdBy, ...form } = response!;
 
         setFormData(form);
       } catch (error) {
