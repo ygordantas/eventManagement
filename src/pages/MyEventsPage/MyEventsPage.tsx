@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import Button from "../../components/Button/Button";
 import EventCard from "../../components/EventCard/EventCard";
+import EventGrid from "../../components/EventGrid/EventGrid";
 import useAlertContext from "../../hooks/useAlertContext";
 import useAuthContext from "../../hooks/useAuthContext";
 import type EventModel from "../../models/EventModel";
@@ -53,7 +54,7 @@ export default function MyEventsPage() {
         </Button>
       </div>
 
-      <div className={classes.eventsGrid}>
+      <EventGrid>
         {myEvents.map((e) => (
           <EventCard
             key={e.id}
@@ -68,7 +69,7 @@ export default function MyEventsPage() {
             }
           />
         ))}
-      </div>
+      </EventGrid>
     </div>
   );
 }
