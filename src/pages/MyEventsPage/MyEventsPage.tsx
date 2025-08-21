@@ -3,11 +3,11 @@ import { Link } from "react-router";
 import Button from "../../components/Button/Button";
 import EventCard from "../../components/EventCard/EventCard";
 import EventGrid from "../../components/EventGrid/EventGrid";
+import PageHeader from "../../components/PageHeader/PageHeader";
 import useAlertContext from "../../hooks/useAlertContext";
 import useAuthContext from "../../hooks/useAuthContext";
 import type EventModel from "../../models/EventModel";
 import eventsServices from "../../services/eventsServices";
-import classes from "./MyEventsPage.module.css";
 
 export default function MyEventsPage() {
   const { user } = useAuthContext();
@@ -46,13 +46,12 @@ export default function MyEventsPage() {
   return isLoading ? (
     "Loading..."
   ) : (
-    <div className={classes.container}>
-      <div className={classes.header}>
-        <h1 className={classes.title}>My Events</h1>
+    <>
+      <PageHeader title='My Events'>
         <Button as={Link} to='/my-events/manage'>
           Create new event
         </Button>
-      </div>
+      </PageHeader>
 
       <EventGrid>
         {myEvents.map((e) => (
@@ -70,6 +69,6 @@ export default function MyEventsPage() {
           />
         ))}
       </EventGrid>
-    </div>
+    </>
   );
 }

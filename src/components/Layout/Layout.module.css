@@ -1,9 +1,13 @@
 .main {
   margin-left: 280px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
 }
 
 @media (max-width: 768px) {
   .main {
     margin-left: 0;
+    padding: 1rem;
   }
 }
