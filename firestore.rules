@@ -11,6 +11,7 @@ service cloud.firestore {
       return request.auth.uid == resource.data.createdBy;
     }
 
+    //https://firebase.google.com/docs/reference/rules/rules.String
     function isEmptyOrWhitespaces(property) {
       return !(property is string) || 
              property.size() == 0 || 
@@ -28,8 +29,7 @@ service cloud.firestore {
     match /events/{eventId}{
       allow read: if request.auth.uid != null;
       allow create: if request.auth.uid == request.resource.data.createdBy;
-      allow update: if isEventCreator();
-      allow delete: if isEventCreator();
+      allow update, delete: if isEventCreator();
     }
   }
 }
