@@ -3,12 +3,25 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+
+    //resource.data (gets you the data that exists in the db before being committed)
+    //request.resource.data (get's you the incoming request body)
+
     function isEventCreator(){
       return request.auth.uid == resource.data.createdBy;
     }
 
+    function isEmptyOrWhitespaces(property) {
+      return !(property is string) || 
+             property.size() == 0 || 
+             property.matches('^\\s*$');
+    }
+
     match /users/{userId} {
-      allow create: if request.auth.uid == userId;
+      allow create: if 
+        request.auth.uid == userId &&
+        !isEmptyOrWhitespaces(request.resource.data.firstName) &&
+        !isEmptyOrWhitespaces(request.resource.data.lastName);
       allow read: if request.auth.uid == userId;
     }
 
