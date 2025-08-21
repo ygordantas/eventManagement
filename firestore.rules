@@ -8,8 +8,8 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow create;
-      allow read: if request.auth.uid == resource.id;
+      allow create: if request.auth.uid == userId;
+      allow read: if request.auth.uid == userId;
     }
 
     match /events/{eventId}{
