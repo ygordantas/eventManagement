@@ -14,6 +14,8 @@
   --red-100: #fff1f0;
   --red-200: #ffa39e;
   --red-300: #f87171;
+  --red-400: #fed7d7;
+  --red-500: #742a2a;
   --purple-100: #d5def5;
   --purple-200: #8594e4;
   --purple-300: #6643b5;
@@ -24,9 +26,13 @@
   --green-100: #f0fff4;
   --green-200: #95de64;
   --green-300: #388e3c;
+  --green-400: #c6f6d5;
+  --green-500: #22543d;
   --blue-100: #e6f7ff;
   --blue-200: #91d5ff;
   --blue-300: #0050b3;
+  --orange-100: #fef5e7;
+  --orange-200: #744210;
   --box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
     rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 }

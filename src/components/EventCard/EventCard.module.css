@@ -1,0 +1,141 @@
+.eventCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-left: 4px solid #e2e8f0;
+}
+.eventCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+.eventCard.upcoming {
+  border-left-color: #48bb78;
+}
+.eventCard.today {
+  border-left-color: #ed8936;
+}
+.eventCard.past {
+  border-left-color: #e53e3e;
+}
+.eventHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+.eventTitle {
+  color: #2d3748;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status.upcoming {
+  background-color: var(--green-400);
+  color: var(--green-500);
+}
+
+.status.today {
+  background-color: var(--orange-100);
+  color: var(--orange-200);
+}
+
+.status.past {
+  background-color: var(--red-400);
+  color: var(--red-500);
+}
+
+.eventDetails {
+  margin-bottom: 1.5rem;
+}
+.eventDateTime,
+.eventLocation,
+.eventDescription {
+  margin: 0.5rem 0;
+  color: #4a5568;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.eventDescription {
+  color: #718096;
+  font-style: italic;
+}
+.eventMeta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 8px;
+}
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.metaLabel {
+  font-size: 0.75rem;
+  color: #718096;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.metaValue {
+  font-size: 0.9rem;
+  color: #2d3748;
+  font-weight: 600;
+}
+.footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer > * {
+  flex: 1;
+  max-width: 120px;
+  min-width: 100px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .eventCard {
+    padding: 1rem;
+  }
+  .eventHeader {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .eventTitle {
+    margin-right: 0;
+  }
+  .eventMeta {
+    grid-template-columns: 1fr;
+  }
+
+  .footer {
+    flex-direction: column;
+  }
+
+  .footer button {
+    max-width: none;
+  }
+}
