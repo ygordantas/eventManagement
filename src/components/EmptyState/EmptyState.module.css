@@ -1,0 +1,28 @@
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: var(--gray-300);
+  font-size: 1.1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 2rem;
+}
+
+.icon {
+  margin-bottom: 1rem;
+  font-size: 3rem;
+  color: var(--gray-200);
+}
+
+.message {
+  margin: 0;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .emptyState {
+    margin: 1rem;
+    padding: 2rem;
+  }
+}
