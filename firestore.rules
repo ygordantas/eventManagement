@@ -2,21 +2,27 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
     function isEventCreator(){
       return request.auth.uid == resource.data.createdBy;
     }
 
+    function isEmptyOrWhiteSpace(value){
+        return !(value is string)
+              || value.trim().size() == 0
+    }
+
     match /users/{userId} {
-      allow create;
+      allow create: if request.auth.uid == userId
+                    && !isEmptyOrWhiteSpace(request.resource.data.firstName) 
+                    && !isEmptyOrWhiteSpace(request.resource.data.lastName);
+      
       allow read: if request.auth.uid == resource.id;
     }
 
     match /events/{eventId}{
       allow read: if request.auth.uid != null;
       allow create: if request.auth.uid == request.resource.data.createdBy;
-      allow update: if isEventCreator();
-      allow delete: if isEventCreator();
+      allow update, delete: if isEventCreator();
     }
   }
 }
