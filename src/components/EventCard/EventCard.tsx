@@ -15,9 +15,7 @@ export default function EventCard({ event, footer }: EventCardProps) {
       </div>
 
       <div className={classes.eventDetails}>
-        <p className={classes.eventDateTime}>
-          {event.date} - {event.time} - {event.timezoneCode}
-        </p>
+        <p className={classes.eventDateTime}>{event.date.toString()}</p>
         {event.isOnline ? (
           <a href={event.address} target="_blank">
             {event.address}

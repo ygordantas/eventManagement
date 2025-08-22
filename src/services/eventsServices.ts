@@ -8,20 +8,57 @@ import {
   getDoc,
   getDocs,
   query,
+  QuerySnapshot,
   updateDoc,
   where,
+  type DocumentData,
+  type WhereFilterOp,
 } from "firebase/firestore";
+import type { DateFilterType } from "../constants/dateFiltersTypes";
+import DATE_FILTER_TYPES from "../constants/dateFiltersTypes";
 
 const EVENTS_COLLECTION = collection(database, "events");
 
 const eventsServices = {
-  getAllEvents: async (): Promise<EventModel[]> => {
-    const snapshot = await getDocs(EVENTS_COLLECTION);
+  getEvents: async (dateFilter?: DateFilterType): Promise<EventModel[]> => {
+    let snapshot: QuerySnapshot<DocumentData, DocumentData>;
 
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as EventModel[];
+    if (dateFilter === DATE_FILTER_TYPES.all) {
+      snapshot = await getDocs(EVENTS_COLLECTION);
+    } else {
+      let operation: WhereFilterOp;
+
+      switch (dateFilter) {
+        case DATE_FILTER_TYPES.now:
+          operation = "==";
+          break;
+        case DATE_FILTER_TYPES.past:
+          operation = "<";
+          break;
+        case DATE_FILTER_TYPES.upcoming:
+          operation = ">";
+          break;
+        default:
+          operation = ">=";
+          break;
+      }
+
+      const queryBuilder = query(
+        EVENTS_COLLECTION,
+        where("date", operation, new Date())
+      );
+
+      snapshot = await getDocs(queryBuilder);
+    }
+
+    return snapshot.docs.map((doc) => {
+      const docData = { ...doc.data() };
+      docData.date = docData.date.toDate();
+      return {
+        id: doc.id,
+        ...docData,
+      };
+    }) as EventModel[];
   },
   getEventById: async (eventId: string): Promise<EventModel | undefined> => {
     const docRef = doc(EVENTS_COLLECTION, eventId);

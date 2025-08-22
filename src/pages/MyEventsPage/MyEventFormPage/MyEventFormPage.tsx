@@ -4,7 +4,6 @@ import Input from "../../../components/Input/Input";
 import Select from "../../../components/Select/Select";
 import classes from "./MyEventFormPage.module.css";
 import DRESS_CODE_TYPES from "../../../data/dressCodeTypes";
-import TIMEZONES from "../../../data/timezones";
 import Textarea from "../../../components/Textarea/Textarea";
 import { getDateOnlyString } from "../../../utils/dateUtils";
 import useAuthContext from "../../../hooks/useAuthContext";
@@ -19,8 +18,6 @@ type EventFormData = {
   isOnline: boolean;
   isPrivate: boolean;
   date: string;
-  time: string;
-  timezoneCode: string;
   address: string;
   dressCode?: string;
   entrancePrice?: number;
@@ -40,8 +37,6 @@ export default function MyEventFormPage() {
     isOnline: false,
     isPrivate: false,
     date: "",
-    time: "",
-    timezoneCode: "",
     address: "",
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -59,9 +54,12 @@ export default function MyEventFormPage() {
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, createdAt, createdBy, ...form } = response!;
+        const { id, createdAt, createdBy, date: dateUtc, ...form } = response!;
 
-        setFormData(form);
+        setFormData({
+          ...form,
+          date: dateUtc.toISOString(),
+        });
       } catch (error) {
         showErrorAlert(error);
       } finally {
@@ -86,14 +84,45 @@ export default function MyEventFormPage() {
     try {
       setIsLoading(true);
 
+      const {
+        minPeopleRequired,
+        entrancePrice,
+        name,
+        isOnline,
+        isPrivate,
+        address,
+        dressCode,
+        maxCapacity,
+        description,
+        date,
+      } = formData;
+
       if (eventId) {
         await eventsServices.updateEvent(eventId, {
-          ...formData,
+          date: new Date(date),
+          entrancePrice,
+          minPeopleRequired,
+          name,
+          isOnline,
+          isPrivate,
+          address,
+          dressCode,
+          maxCapacity,
+          description,
           updatedAt: TODAY,
         });
       } else {
         await eventsServices.createEvent({
-          ...formData,
+          date: new Date(date),
+          entrancePrice,
+          minPeopleRequired,
+          name,
+          isOnline,
+          isPrivate,
+          address,
+          dressCode,
+          maxCapacity,
+          description,
           createdBy: user!.id,
           createdAt: TODAY,
         });
@@ -122,7 +151,6 @@ export default function MyEventFormPage() {
           <form onSubmit={onSubmitHandler} className={classes.form}>
             <div className={classes.section}>
               <h2 className={classes.sectionTitle}>Event Details</h2>
-
               <Input
                 required
                 label="Event Name"
@@ -179,7 +207,7 @@ export default function MyEventFormPage() {
               <div className={classes.row}>
                 <Input
                   label="Date"
-                  type="date"
+                  type="datetime-local"
                   min={getMinDate}
                   required
                   value={formData.date}
@@ -190,72 +218,49 @@ export default function MyEventFormPage() {
                     }));
                   }}
                 />
-                <Input
-                  label="Time"
-                  type="time"
-                  required
-                  value={formData.time}
+
+                <Select
+                  label="Dress Code"
+                  value={formData.dressCode ?? ""}
                   onChange={(e) => {
                     setFormData((prev) => ({
                       ...prev,
-                      time: e.target.value,
+                      dressCode: e.target.value,
+                    }));
+                  }}
+                  options={DRESS_CODE_TYPES}
+                />
+
+                <Input
+                  label="Entrance Price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={formData.entrancePrice ?? ""}
+                  onChange={(e) => {
+                    const entryValue = e.target.value;
+                    setFormData((prev) => ({
+                      ...prev,
+                      entrancePrice: entryValue
+                        ? Number(entryValue)
+                        : undefined,
                     }));
                   }}
                 />
-              </div>
 
-              <Select
-                label="Timezone"
-                value={formData.timezoneCode}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    timezoneCode: e.target.value,
-                  }))
-                }
-                required
-                options={TIMEZONES}
-              />
-
-              <Select
-                label="Dress Code"
-                value={formData.dressCode ?? ""}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    dressCode: e.target.value,
-                  }));
-                }}
-                options={DRESS_CODE_TYPES}
-              />
-
-              <Input
-                label="Entrance Price"
-                type="number"
-                min="0"
-                step="0.01"
-                placeholder="0.00"
-                value={formData.entrancePrice ?? ""}
-                onChange={(e) => {
-                  const entryValue = e.target.value;
-                  setFormData((prev) => ({
-                    ...prev,
-                    entrancePrice: entryValue ? Number(entryValue) : undefined,
-                  }));
-                }}
-              />
-
-              <div className={classes.descriptionContainer}>
-                <Textarea
-                  label={"Description"}
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                />
+                <div className={classes.descriptionContainer}>
+                  <Textarea
+                    label={"Description"}
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
               </div>
             </div>
 

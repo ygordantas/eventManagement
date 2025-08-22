@@ -3,9 +3,7 @@ export default interface EventModel {
   name: string;
   isOnline: boolean;
   isPrivate: boolean;
-  date: string;
-  time: string;
-  timezoneCode: string;
+  date: Date;
   address: string;
   createdBy: string;
   createdAt: Date;
