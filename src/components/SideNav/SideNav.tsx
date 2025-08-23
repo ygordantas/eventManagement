@@ -19,9 +19,9 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Home", path: "/", iconPath: HomeIcon },
+  { label: "Events", path: "/events", iconPath: BalloonIcon },
   { label: "My events", path: "/my-events", iconPath: StarIcon },
   { label: "Friends", path: "/friends", iconPath: PersonIcon },
-  { label: "Events", path: "/events", iconPath: BalloonIcon },
   { label: "Inbox", path: "/inbox", iconPath: EnvelopeIcon },
 ];
 
