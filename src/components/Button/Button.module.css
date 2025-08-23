@@ -41,6 +41,12 @@
   cursor: not-allowed;
 }
 
+.disabled:hover {
+  box-shadow: none;
+  background-color: var(--gray-100);
+}
+
+
 .align_left,
 .align_right,
 .align_center {
