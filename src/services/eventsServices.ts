@@ -1,5 +1,3 @@
-import type EventModel from "../models/EventModel";
-import { database } from "../firebase";
 import {
   addDoc,
   collection,
@@ -7,17 +5,29 @@ import {
   doc,
   getDoc,
   getDocs,
+  Query,
   query,
+  QueryDocumentSnapshot,
   QuerySnapshot,
   updateDoc,
   where,
   type DocumentData,
-  type WhereFilterOp,
 } from "firebase/firestore";
 import type { DateFilterType } from "../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../constants/dateFiltersTypes";
+import { database } from "../firebase";
+import type EventModel from "../models/EventModel";
 
 const EVENTS_COLLECTION = collection(database, "events");
+
+const mapFirestoreDocToEventModel = (doc: QueryDocumentSnapshot<DocumentData, DocumentData>): EventModel => {
+  const docData = { ...doc.data() };
+  docData.date = docData.date.toDate();
+  return {
+    id: doc.id,
+    ...docData,
+  } as EventModel;
+};
 
 const eventsServices = {
   getEvents: async (dateFilter?: DateFilterType): Promise<EventModel[]> => {
@@ -26,59 +36,45 @@ const eventsServices = {
     if (dateFilter === DATE_FILTER_TYPES.all) {
       snapshot = await getDocs(EVENTS_COLLECTION);
     } else {
-      let operation: WhereFilterOp;
+      let queryBuilder: Query<DocumentData, DocumentData>;
+
+      const fromDate = new Date();
+      fromDate.setHours(0, 0, 0, 0);
+
+      const toDate = new Date();
+      toDate.setHours(23, 59, 59, 999);
 
       switch (dateFilter) {
-        case DATE_FILTER_TYPES.now:
-          operation = "==";
+        case DATE_FILTER_TYPES.today:
+          queryBuilder = query(EVENTS_COLLECTION, where("date", ">=", fromDate), where("date", "<=", toDate));
           break;
         case DATE_FILTER_TYPES.past:
-          operation = "<";
+          queryBuilder = query(EVENTS_COLLECTION, where("date", "<", fromDate));
           break;
         case DATE_FILTER_TYPES.upcoming:
-          operation = ">";
+          queryBuilder = query(EVENTS_COLLECTION, where("date", ">", toDate));
           break;
         default:
-          operation = ">=";
+          queryBuilder = query(EVENTS_COLLECTION, where("date", ">=", fromDate), where("date", "<=", toDate));
           break;
       }
-
-      const queryBuilder = query(
-        EVENTS_COLLECTION,
-        where("date", operation, new Date())
-      );
 
       snapshot = await getDocs(queryBuilder);
     }
 
-    return snapshot.docs.map((doc) => {
-      const docData = { ...doc.data() };
-      docData.date = docData.date.toDate();
-      return {
-        id: doc.id,
-        ...docData,
-      };
-    }) as EventModel[];
+    return snapshot.docs.map(mapFirestoreDocToEventModel) as EventModel[];
   },
   getEventById: async (eventId: string): Promise<EventModel | undefined> => {
     const docRef = doc(EVENTS_COLLECTION, eventId);
     const snapshot = await getDoc(docRef);
 
-    return snapshot.exists()
-      ? ({ ...snapshot.data(), id: snapshot.id } as EventModel)
-      : undefined;
+    return snapshot.exists() ? mapFirestoreDocToEventModel(snapshot) : undefined;
   },
   getUserEvents: async (userId: string): Promise<EventModel[]> => {
-    const getUserEventsQuery = query(
-      EVENTS_COLLECTION,
-      where("createdBy", "==", userId)
-    );
+    const getUserEventsQuery = query(EVENTS_COLLECTION, where("createdBy", "==", userId));
     const snapshot = await getDocs(getUserEventsQuery);
 
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as EventModel[];
+    return snapshot.docs.map(mapFirestoreDocToEventModel) as EventModel[];
   },
   createEvent: async (newEvent: Omit<EventModel, "id">): Promise<void> => {
     await addDoc(EVENTS_COLLECTION, newEvent);

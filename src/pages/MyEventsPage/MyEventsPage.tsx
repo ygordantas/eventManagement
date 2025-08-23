@@ -20,13 +20,7 @@ export default function MyEventsPage() {
       try {
         const events = await eventsServices.getUserEvents(user!.id);
 
-        setMyEvents(
-          events.sort(
-            (a, b) =>
-              new Date(a.date).getMilliseconds() -
-              new Date(b.date).getMilliseconds()
-          )
-        );
+        setMyEvents(events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
       } catch (error) {
         showErrorAlert(error);
       } finally {
