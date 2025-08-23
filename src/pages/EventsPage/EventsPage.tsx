@@ -9,6 +9,7 @@ import Button from "../../components/Button/Button";
 import Select from "../../components/Select/Select";
 import type { DateFilterType } from "../../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../../constants/dateFiltersTypes";
+import classes from "./EventsPage.module.css";
 
 export default function EventsPage() {
   const { showErrorAlert } = useAlertContext();
@@ -37,14 +38,11 @@ export default function EventsPage() {
     "Loading..."
   ) : (
     <>
-      <PageHeader title="Events">
+      <PageHeader title='Events'>
         <Select
-          label={"Filter by date"}
-          onChange={(e) =>
-            setFilter(
-              e.target.value ? (e.target.value as DateFilterType) : undefined
-            )
-          }
+          className={classes.select_container}
+          label={"Filter Events"}
+          onChange={(e) => setFilter(e.target.value ? (e.target.value as DateFilterType) : undefined)}
           options={Object.values(DATE_FILTER_TYPES).map((v) => ({
             code: v,
             value: v,
@@ -53,11 +51,7 @@ export default function EventsPage() {
       </PageHeader>
       <EventGrid>
         {allEvents.map((e) => (
-          <EventCard
-            key={e.id}
-            event={e}
-            footer={<Button>Attend Event</Button>}
-          />
+          <EventCard key={e.id} event={e} footer={<Button>Attend Event</Button>} />
         ))}
       </EventGrid>
     </>
