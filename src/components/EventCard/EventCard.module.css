@@ -10,13 +10,13 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
-.eventCard.upcoming {
+.eventCard.Upcoming {
   border-left-color: #48bb78;
 }
-.eventCard.today {
+.eventCard.Today {
   border-left-color: #ed8936;
 }
-.eventCard.past {
+.eventCard.Past {
   border-left-color: #e53e3e;
 }
 .eventHeader {
@@ -43,17 +43,17 @@
   letter-spacing: 0.5px;
 }
 
-.status.upcoming {
+.status.Upcoming {
   background-color: var(--green-400);
   color: var(--green-500);
 }
 
-.status.today {
+.status.Today {
   background-color: var(--orange-100);
   color: var(--orange-200);
 }
 
-.status.past {
+.status.Past {
   background-color: var(--red-400);
   color: var(--red-500);
 }
