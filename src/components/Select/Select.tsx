@@ -25,9 +25,8 @@ export default function Select({ label, options, ...props }: SelectProps) {
           Boolean(remainingProps.value) && classes.has_value,
           errorMessage && classes.has_error
         )}
-        {...remainingProps}
-      >
-        <option value="" hidden={remainingProps.required} />
+        {...remainingProps}>
+        <option value='' hidden={remainingProps.required} />
         {options.map((opt) => (
           <option key={opt.code} value={opt.code}>
             {opt.value}

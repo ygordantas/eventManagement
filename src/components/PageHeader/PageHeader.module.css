@@ -22,11 +22,6 @@
   align-items: center;
 }
 
-/* Override Select component margin when used in PageHeader */
-.actions :global(.select_container) {
-  margin: 0;
-  max-width: none;
-}
 
 @media (max-width: 768px) {
   .header {

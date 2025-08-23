@@ -35,8 +35,8 @@ export default function Button<T extends React.ElementType = "button">({
       href={href && !disabled ? href : "#"}
       target={target && !disabled ? target : ""}
       className={btnClasses}
-      {...remainingProps}
-    >
+      disabled={disabled}
+      {...remainingProps}>
       {children}
     </Component>
   );

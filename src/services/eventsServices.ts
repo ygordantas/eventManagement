@@ -18,6 +18,9 @@ import DATE_FILTER_TYPES from "../constants/dateFiltersTypes";
 import { database } from "../firebase";
 import type EventModel from "../models/EventModel";
 
+//TODO: Implement filter by date
+//TODO: Implement Pagination
+
 const EVENTS_COLLECTION = collection(database, "events");
 
 const mapFirestoreDocToEventModel = (doc: QueryDocumentSnapshot<DocumentData, DocumentData>): EventModel => {

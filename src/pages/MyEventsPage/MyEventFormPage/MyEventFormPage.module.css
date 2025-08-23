@@ -71,6 +71,23 @@
   margin-left: -15px;
 }
 
+.dressCodeContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.dressCodeContainer > * {
+  width: 100%;
+  max-width: 400px;
+}
+
+@media (min-width: 1024px) {
+  .dressCodeContainer > * {
+    width: 50%;
+  }
+}
+
 @media (max-width: 768px) {
   .row {
     grid-template-columns: 1fr;

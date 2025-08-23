@@ -2,6 +2,7 @@
   position: relative;
   margin: 50px auto;
   max-width: 80vw;
+  padding-bottom: 15px;
 }
 
 .input_container input {
@@ -47,6 +48,12 @@
 .input_container span {
   color: var(--red-300);
   font-size: 14px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 2px;
+  min-height: 16px;
+  display: block;
 }
 
 .input_container input.has_error {
@@ -95,4 +102,11 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  padding-bottom: 0;
+}
+
+.input_container:has(input[type="checkbox"]) span {
+  position: static;
+  margin-top: 0;
+  min-height: auto;
 }
