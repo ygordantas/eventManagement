@@ -17,6 +17,9 @@ import {
 import type { DateFilterType } from "../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../constants/dateFiltersTypes";
 
+//TODO: Implement filter by date
+//TODO: Implement Pagination
+
 const EVENTS_COLLECTION = collection(database, "events");
 
 const eventsServices = {
