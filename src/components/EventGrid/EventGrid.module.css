@@ -2,10 +2,179 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
+  padding-bottom: 120px; /* Space for fixed footer pagination */
+}
+
+.loadingTrigger {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 2rem;
+  min-height: 120px;
+}
+
+.loadingSpinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #666;
+  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.loadingSpinner::before {
+  content: "";
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f0f0f0;
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.loadingSpinner::after {
+  content: "";
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border: 2px solid transparent;
+  border-top: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 50%;
+  animation: spin 1.5s linear infinite reverse;
+  margin-top: -4px;
+}
+
+@keyframes spin {
+  0% { 
+    transform: rotate(0deg); 
+  }
+  100% { 
+    transform: rotate(360deg); 
+  }
+}
+
+/* Add a subtle pulse animation to the text */
+.loadingSpinner {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 0.7; 
+  }
+  50% { 
+    opacity: 1; 
+  }
+}
+
+/* Add a subtle gradient background to the loading trigger */
+.loadingTrigger {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.02) 0%, rgba(118, 75, 162, 0.02) 100%);
+  border-radius: 12px;
+  margin: 1rem 0;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.pagination {
+  position: fixed;
+  bottom: 0;
+  left: 280px; /* Start after sidenav on desktop */
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #ffffff;
+  border-top: 2px solid #e9ecef;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.pageSizeSelector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pageSizeSelector label {
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+}
+
+.pageSizeSelect {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.pageSizeSelect:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.pageNavigation {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pageInfo {
+  font-weight: 500;
+  color: #666;
+  min-width: 60px;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
   .eventsGrid {
     grid-template-columns: 1fr;
+    padding-bottom: 140px; /* More space on mobile for stacked pagination */
+  }
+  
+  .loadingTrigger {
+    padding: 2rem 1rem;
+    margin: 0.5rem 0;
+  }
+  
+  .loadingSpinner::before {
+    width: 32px;
+    height: 32px;
+    border-width: 2.5px;
+  }
+  
+  .loadingSpinner::after {
+    width: 40px;
+    height: 40px;
+    border-width: 1.5px;
+  }
+  
+  .pagination {
+    left: 0; /* Full width on mobile since sidenav is hidden */
+    right: 0;
+    z-index: 1002; /* Higher than sidenav (1000) and toggle button (1001) */
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-top: 2px solid #007bff;
+  }
+  
+  .pageSizeSelector {
+    justify-content: center;
+  }
+  
+  .pageNavigation {
+    justify-content: center;
   }
 }

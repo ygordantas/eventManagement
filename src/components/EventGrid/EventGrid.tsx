@@ -1,5 +1,5 @@
-import { useEffect, useRef, useCallback } from "react";
 import type { PropsWithChildren } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import classes from "./EventGrid.module.css";
 
 type EventGridProps = {
@@ -59,7 +59,7 @@ export default function EventGrid({
       {children}
       {hasMore && onLoadMore && (
         <div ref={lastElementRef} className={classes.loadingTrigger}>
-          {isLoading && <div className={classes.loadingSpinner}>Loading more events...</div>}
+          {isLoading && <div className={classes.loadingSpinner} />}
         </div>
       )}
     </div>
