@@ -11,6 +11,12 @@ export default function useInfinityScroll<T>() {
   const lastDocRef = useRef<QueryDocumentSnapshot<DocumentData, DocumentData> | undefined>(undefined);
   const { showErrorAlert } = useAlertContext();
 
+  const clear = useCallback(() => {
+    setRecords([]);
+    setHasMore(true);
+    lastDocRef.current = undefined;
+  }, []);
+
   const loadRecords = useCallback(
     async (callback: (lastDoc?: QueryDocumentSnapshot<DocumentData, DocumentData>) => Promise<PaginatedResult<T>>) => {
       try {
@@ -40,5 +46,6 @@ export default function useInfinityScroll<T>() {
     isLoadingMore,
     hasMore,
     loadRecords,
+    clear,
   };
 }

@@ -1,23 +1,22 @@
-import { useEffect, useState, useCallback } from "react";
-import type EventModel from "../../models/EventModel";
-import eventsServices from "../../services/eventsServices";
-
-import PageHeader from "../../components/PageHeader/PageHeader";
-import EventGrid from "../../components/EventGrid/EventGrid";
-import EventCard from "../../components/EventCard/EventCard";
+import type { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+import { useCallback, useEffect, useState } from "react";
 import Button from "../../components/Button/Button";
+import EventCard from "../../components/EventCard/EventCard";
+import EventGrid from "../../components/EventGrid/EventGrid";
+import PageHeader from "../../components/PageHeader/PageHeader";
 import Select from "../../components/Select/Select";
 import type { DateFilterType } from "../../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../../constants/dateFiltersTypes";
-import classes from "./EventsPage.module.css";
-import type { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import useInfinityScroll from "../../hooks/useInfinityScroll";
+import type EventModel from "../../models/EventModel";
+import eventsServices from "../../services/eventsServices";
+import classes from "./EventsPage.module.css";
 
 export default function EventsPage() {
   const [filter, setFilter] = useState<DateFilterType | undefined>();
   const [isLoading, setIsLoading] = useState(true);
 
-  const { records: allEvents, isLoadingMore, hasMore, loadRecords } = useInfinityScroll<EventModel>();
+  const { records: allEvents, isLoadingMore, hasMore, loadRecords, clear } = useInfinityScroll<EventModel>();
 
   const loadEvents = useCallback(
     (lastDoc?: QueryDocumentSnapshot<DocumentData, DocumentData>) => {
@@ -34,6 +33,7 @@ export default function EventsPage() {
 
   useEffect(() => {
     const loadInitialData = async () => {
+      clear(); // Clear previous records when filter changes
       setIsLoading(true);
       try {
         await loadRecords(loadEvents);
@@ -43,7 +43,7 @@ export default function EventsPage() {
     };
 
     loadInitialData();
-  }, [filter, loadEvents, loadRecords]);
+  }, [filter, clear, loadRecords, loadEvents]);
 
   return isLoading ? (
     "Loading..."

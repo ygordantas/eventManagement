@@ -47,6 +47,8 @@ const eventsServices = {
     toDate.setHours(23, 59, 59, 999);
 
     switch (dateFilter) {
+      case DATE_FILTER_TYPES.all:
+        break;
       case DATE_FILTER_TYPES.today:
         queryConstraints.push(where("date", ">=", fromDate), where("date", "<=", toDate));
         break;
