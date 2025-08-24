@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type EventModel from "../../models/EventModel";
 import eventsServices from "../../services/eventsServices";
-import useAlertContext from "../../hooks/useAlertContext";
+
 import PageHeader from "../../components/PageHeader/PageHeader";
 import EventGrid from "../../components/EventGrid/EventGrid";
 import EventCard from "../../components/EventCard/EventCard";
@@ -10,29 +10,40 @@ import Select from "../../components/Select/Select";
 import type { DateFilterType } from "../../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../../constants/dateFiltersTypes";
 import classes from "./EventsPage.module.css";
+import type { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+import useInfinityScroll from "../../hooks/useInfinityScroll";
 
 export default function EventsPage() {
-  const { showErrorAlert } = useAlertContext();
-
-  const [allEvents, setAllEvents] = useState<EventModel[]>([]);
   const [filter, setFilter] = useState<DateFilterType | undefined>();
   const [isLoading, setIsLoading] = useState(true);
 
+  const { records: allEvents, isLoadingMore, hasMore, loadRecords } = useInfinityScroll<EventModel>();
+
+  const loadEvents = useCallback(
+    (lastDoc?: QueryDocumentSnapshot<DocumentData, DocumentData>) => {
+      return eventsServices.getEvents(filter, lastDoc);
+    },
+    [filter]
+  );
+
+  const handleLoadMoreEvents = useCallback(() => {
+    if (!isLoadingMore && hasMore) {
+      loadRecords(loadEvents);
+    }
+  }, [isLoadingMore, hasMore, loadRecords, loadEvents]);
+
   useEffect(() => {
-    const getAllEvents = async () => {
+    const loadInitialData = async () => {
       setIsLoading(true);
       try {
-        const events = await eventsServices.getEvents(filter);
-        setAllEvents(events);
-      } catch (error) {
-        showErrorAlert(error);
+        await loadRecords(loadEvents);
       } finally {
         setIsLoading(false);
       }
     };
 
-    getAllEvents();
-  }, [filter, showErrorAlert]);
+    loadInitialData();
+  }, [filter, loadEvents, loadRecords]);
 
   return isLoading ? (
     "Loading..."
@@ -49,7 +60,7 @@ export default function EventsPage() {
           }))}
         />
       </PageHeader>
-      <EventGrid>
+      <EventGrid onLoadMore={handleLoadMoreEvents} hasMore={hasMore} isLoading={isLoadingMore}>
         {allEvents.map((e) => (
           <EventCard key={e.id} event={e} footer={<Button>Attend Event</Button>} />
         ))}

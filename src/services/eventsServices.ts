@@ -5,23 +5,24 @@ import {
   doc,
   getDoc,
   getDocs,
-  Query,
+  limit,
   query,
+  QueryConstraint,
   QueryDocumentSnapshot,
-  QuerySnapshot,
+  startAfter,
   updateDoc,
   where,
   type DocumentData,
+  orderBy,
 } from "firebase/firestore";
 import type { DateFilterType } from "../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../constants/dateFiltersTypes";
 import { database } from "../firebase";
 import type EventModel from "../models/EventModel";
-
-//TODO: Implement filter by date
-//TODO: Implement Pagination
+import type PaginatedResult from "../models/PaginatedResult";
 
 const EVENTS_COLLECTION = collection(database, "events");
+const PAGE_SIZE = 2;
 
 const mapFirestoreDocToEventModel = (doc: QueryDocumentSnapshot<DocumentData, DocumentData>): EventModel => {
   const docData = { ...doc.data() };
@@ -33,39 +34,45 @@ const mapFirestoreDocToEventModel = (doc: QueryDocumentSnapshot<DocumentData, Do
 };
 
 const eventsServices = {
-  getEvents: async (dateFilter?: DateFilterType): Promise<EventModel[]> => {
-    let snapshot: QuerySnapshot<DocumentData, DocumentData>;
+  getEvents: async (
+    dateFilter?: DateFilterType,
+    lastDoc?: QueryDocumentSnapshot<DocumentData, DocumentData>
+  ): Promise<PaginatedResult<EventModel>> => {
+    const queryConstraints: QueryConstraint[] = [limit(PAGE_SIZE)];
 
-    if (dateFilter === DATE_FILTER_TYPES.all) {
-      snapshot = await getDocs(EVENTS_COLLECTION);
-    } else {
-      let queryBuilder: Query<DocumentData, DocumentData>;
+    const fromDate = new Date();
+    fromDate.setHours(0, 0, 0, 0);
 
-      const fromDate = new Date();
-      fromDate.setHours(0, 0, 0, 0);
+    const toDate = new Date();
+    toDate.setHours(23, 59, 59, 999);
 
-      const toDate = new Date();
-      toDate.setHours(23, 59, 59, 999);
-
-      switch (dateFilter) {
-        case DATE_FILTER_TYPES.today:
-          queryBuilder = query(EVENTS_COLLECTION, where("date", ">=", fromDate), where("date", "<=", toDate));
-          break;
-        case DATE_FILTER_TYPES.past:
-          queryBuilder = query(EVENTS_COLLECTION, where("date", "<", fromDate));
-          break;
-        case DATE_FILTER_TYPES.upcoming:
-          queryBuilder = query(EVENTS_COLLECTION, where("date", ">", toDate));
-          break;
-        default:
-          queryBuilder = query(EVENTS_COLLECTION, where("date", ">=", fromDate), where("date", "<=", toDate));
-          break;
-      }
-
-      snapshot = await getDocs(queryBuilder);
+    switch (dateFilter) {
+      case DATE_FILTER_TYPES.today:
+        queryConstraints.push(where("date", ">=", fromDate), where("date", "<=", toDate));
+        break;
+      case DATE_FILTER_TYPES.past:
+        queryConstraints.push(where("date", "<", fromDate));
+        break;
+      case DATE_FILTER_TYPES.upcoming:
+        queryConstraints.push(where("date", ">", toDate));
+        break;
+      default:
+        queryConstraints.push(where("date", ">=", fromDate));
+        break;
     }
 
-    return snapshot.docs.map(mapFirestoreDocToEventModel) as EventModel[];
+    if (lastDoc) {
+      queryConstraints.push(startAfter(lastDoc));
+    }
+
+    const snapshot = await getDocs(query(EVENTS_COLLECTION, ...queryConstraints));
+    const events = snapshot.docs.map(mapFirestoreDocToEventModel) as EventModel[];
+
+    return {
+      result: events,
+      lastDoc: snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null,
+      hasMore: snapshot.docs.length === PAGE_SIZE,
+    };
   },
   getEventById: async (eventId: string): Promise<EventModel | undefined> => {
     const docRef = doc(EVENTS_COLLECTION, eventId);
@@ -78,6 +85,29 @@ const eventsServices = {
     const snapshot = await getDocs(getUserEventsQuery);
 
     return snapshot.docs.map(mapFirestoreDocToEventModel) as EventModel[];
+  },
+  getUserEventsPaginated: async (
+    userId: string,
+    lastDoc?: QueryDocumentSnapshot<DocumentData, DocumentData>
+  ): Promise<PaginatedResult<EventModel>> => {
+    const queryConstraints: QueryConstraint[] = [
+      where("createdBy", "==", userId),
+      orderBy("date", "asc"),
+      limit(PAGE_SIZE),
+    ];
+
+    if (lastDoc) {
+      queryConstraints.push(startAfter(lastDoc));
+    }
+
+    const snapshot = await getDocs(query(EVENTS_COLLECTION, ...queryConstraints));
+    const events = snapshot.docs.map(mapFirestoreDocToEventModel) as EventModel[];
+
+    return {
+      result: events,
+      lastDoc: snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null,
+      hasMore: snapshot.docs.length === PAGE_SIZE,
+    };
   },
   createEvent: async (newEvent: Omit<EventModel, "id">): Promise<void> => {
     await addDoc(EVENTS_COLLECTION, newEvent);
