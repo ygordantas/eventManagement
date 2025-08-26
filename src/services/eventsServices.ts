@@ -97,6 +97,20 @@ const eventsServices = {
     const docRef = doc(EVENTS_COLLECTION, eventId);
     await updateDoc(docRef, updatedEvent);
   },
+  customQuery: async () => {
+    const queryConstrains = [
+      where("date", "<=", new Date()),
+      where("entrancePrice", ">=", 100),
+    ];
+
+    const queryBuilder = query(EVENTS_COLLECTION, ...queryConstrains);
+
+    const snapshot = await getDocs(queryBuilder);
+
+    console.log(snapshot);
+
+    return snapshot.docs.map((d) => d.data());
+  },
 };
 
 export default eventsServices;
