@@ -10,6 +10,8 @@ import EventsPage from "./pages/EventsPage/EventsPage";
 import InboxPage from "./pages/InboxPage/InboxPage";
 import MyEventFormPage from "./pages/MyEventsPage/MyEventFormPage/MyEventFormPage";
 import LoginPage from "./pages/Auth/LoginPage/LoginPage";
+// import ErrorBoundary from "./ErrorBoundary";
+import { ErrorBoundary } from "react-error-boundary";
 
 function App() {
   const authRoutes = (
@@ -39,10 +41,12 @@ function App() {
     </Route>
   );
   return (
-    <Routes>
-      {protectedRoutes}
-      {authRoutes}
-    </Routes>
+    <ErrorBoundary fallback={<div>Something went wrong</div>}>
+      <Routes>
+        {protectedRoutes}
+        {authRoutes}
+      </Routes>
+    </ErrorBoundary>
   );
 }
 
