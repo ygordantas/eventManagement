@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type EventModel from "../../models/EventModel";
 import eventsServices from "../../services/eventsServices";
 import useAlertContext from "../../hooks/useAlertContext";
@@ -10,20 +10,36 @@ import Select from "../../components/Select/Select";
 import type { DateFilterType } from "../../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../../constants/dateFiltersTypes";
 import classes from "./EventsPage.module.css";
+import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
 
 export default function EventsPage() {
   const { showErrorAlert } = useAlertContext();
 
-  const [allEvents, setAllEvents] = useState<EventModel[]>([]);
+  const [events, setEvents] = useState<EventModel[]>([]);
   const [filter, setFilter] = useState<DateFilterType | undefined>();
   const [isLoading, setIsLoading] = useState(true);
+
+  const lastDoc: React.RefObject<
+    DocumentSnapshot<DocumentData, DocumentData> | undefined
+  > = useRef(undefined);
+
+  const hasMoreEventsToLoad: React.RefObject<boolean | undefined> =
+    useRef(undefined);
 
   useEffect(() => {
     const getAllEvents = async () => {
       setIsLoading(true);
       try {
-        const events = await eventsServices.getEvents(filter);
-        setAllEvents(events);
+        const paginatedResult = await eventsServices.getEvents(filter);
+
+        lastDoc.current = paginatedResult.lastDoc;
+        hasMoreEventsToLoad.current = paginatedResult.hasMore;
+
+        setEvents(
+          paginatedResult.records.sort(
+            (a, b) => a.date.getTime() - b.date.getTime()
+          )
+        );
       } catch (error) {
         showErrorAlert(error);
       } finally {
@@ -34,15 +50,43 @@ export default function EventsPage() {
     getAllEvents();
   }, [filter, showErrorAlert]);
 
+  const onLoadMoreEventsClickHandler = async () => {
+    setIsLoading(true);
+    try {
+      const paginatedResult = await eventsServices.getEvents(
+        filter,
+        lastDoc.current
+      );
+
+      lastDoc.current = paginatedResult.lastDoc;
+      hasMoreEventsToLoad.current = paginatedResult.hasMore;
+
+      setEvents((prev) =>
+        [...prev, ...paginatedResult.records].sort(
+          (a, b) => a.date.getTime() - b.date.getTime()
+        )
+      );
+    } catch (error) {
+      showErrorAlert(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return isLoading ? (
     "Loading..."
   ) : (
     <>
-      <PageHeader title='Events'>
+      <PageHeader title="Events">
         <Select
           className={classes.select_container}
           label={"Filter Events"}
-          onChange={(e) => setFilter(e.target.value ? (e.target.value as DateFilterType) : undefined)}
+          value={filter ?? ""}
+          onChange={(e) =>
+            setFilter(
+              e.target.value ? (e.target.value as DateFilterType) : undefined
+            )
+          }
           options={Object.values(DATE_FILTER_TYPES).map((v) => ({
             code: v,
             value: v,
@@ -50,10 +94,17 @@ export default function EventsPage() {
         />
       </PageHeader>
       <EventGrid>
-        {allEvents.map((e) => (
-          <EventCard key={e.id} event={e} footer={<Button>Attend Event</Button>} />
+        {events.map((e) => (
+          <EventCard
+            key={e.id}
+            event={e}
+            footer={<Button>Attend Event</Button>}
+          />
         ))}
       </EventGrid>
+      {hasMoreEventsToLoad.current && (
+        <Button onClick={onLoadMoreEventsClickHandler}>Load more events</Button>
+      )}
     </>
   );
 }
