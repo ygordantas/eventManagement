@@ -8,7 +8,6 @@ import useAlertContext from "../../hooks/useAlertContext";
 import EventGrid from "../../components/EventGrid/EventGrid";
 import EventCard from "../../components/EventCard/EventCard";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import ErrorBoundary from "../../ErrorBoundary";
 
 export default function MyEventsPage() {
   const { user } = useAuthContext();
@@ -54,13 +53,13 @@ export default function MyEventsPage() {
     "Loading..."
   ) : (
     <>
-      <ErrorBoundary>
-        <PageHeader title="My Events">
-          <Button as={Link} to="/my-events/manage">
-            Create new event
-          </Button>
-        </PageHeader>
-      </ErrorBoundary>
+      <PageHeader title="My Events">
+        {null.first}
+
+        <Button as={Link} to="/my-events/manage">
+          Create new event
+        </Button>
+      </PageHeader>
       <EventGrid>
         {myEvents.map((e) => (
           <EventCard

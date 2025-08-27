@@ -10,7 +10,7 @@ import EventsPage from "./pages/EventsPage/EventsPage";
 import InboxPage from "./pages/InboxPage/InboxPage";
 import MyEventFormPage from "./pages/MyEventsPage/MyEventFormPage/MyEventFormPage";
 import LoginPage from "./pages/Auth/LoginPage/LoginPage";
-import ErrorBoundary from "./ErrorBoundary";
+import { ErrorBoundary } from "react-error-boundary";
 
 function App() {
   const authRoutes = (
