@@ -115,6 +115,17 @@ const eventsServices = {
     const docRef = doc(EVENTS_COLLECTION, eventId);
     await updateDoc(docRef, updatedEvent);
   },
+  getCustomEvent: async (): Promise<EventModel[]> => {
+    const queryBuilder = query(
+      EVENTS_COLLECTION,
+      where("date", "<=", new Date()),
+      where("entrancePrice", ">=", 100)
+    );
+
+    const snapshot = await getDocs(queryBuilder);
+
+    return snapshot.docs.map(mapFirestoreDocToEventModel);
+  },
 };
 
 export default eventsServices;

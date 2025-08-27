@@ -10,6 +10,7 @@ import EventsPage from "./pages/EventsPage/EventsPage";
 import InboxPage from "./pages/InboxPage/InboxPage";
 import MyEventFormPage from "./pages/MyEventsPage/MyEventFormPage/MyEventFormPage";
 import LoginPage from "./pages/Auth/LoginPage/LoginPage";
+import ErrorBoundary from "./ErrorBoundary";
 
 function App() {
   const authRoutes = (
@@ -22,9 +23,11 @@ function App() {
   const protectedRoutes = (
     <Route
       element={
-        <RouteGuard>
-          <Layout />
-        </RouteGuard>
+        <ErrorBoundary fallback={"Something went wrong"}>
+          <RouteGuard>
+            <Layout />
+          </RouteGuard>
+        </ErrorBoundary>
       }
     >
       <Route index element={<HomePage />} />

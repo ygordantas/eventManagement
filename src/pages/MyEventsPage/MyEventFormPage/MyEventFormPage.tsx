@@ -5,7 +5,6 @@ import Select from "../../../components/Select/Select";
 import classes from "./MyEventFormPage.module.css";
 import DRESS_CODE_TYPES from "../../../data/dressCodeTypes";
 import Textarea from "../../../components/Textarea/Textarea";
-import { getDateOnlyString } from "../../../utils/dateUtils";
 import useAuthContext from "../../../hooks/useAuthContext";
 import { useNavigate, useParams } from "react-router";
 import useAlertContext from "../../../hooks/useAlertContext";
@@ -72,10 +71,13 @@ export default function MyEventFormPage() {
     }
   }, [eventId, navigate, showErrorAlert]);
 
-  const getMinDate = useMemo(() => {
+  const minDate = useMemo(() => {
     const minDate = new Date();
     minDate.setDate(minDate.getDate() - 1);
-    return getDateOnlyString(minDate);
+
+    return minDate
+      .toISOString()
+      .slice(0, new Date().toISOString().lastIndexOf(":"));
   }, []);
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -127,7 +129,9 @@ export default function MyEventFormPage() {
           createdAt: TODAY,
         });
       }
-      showSuccessAlert(`Event ${eventId ? "updated" : "created"} successfully!`);
+      showSuccessAlert(
+        `Event ${eventId ? "updated" : "created"} successfully!`
+      );
 
       navigate("/my-events");
     } catch (error) {
@@ -143,13 +147,15 @@ export default function MyEventFormPage() {
         "Loading..."
       ) : (
         <div className={classes.formWrapper}>
-          <h1 className={classes.title}>{eventId ? "Edit" : "Create"} your event</h1>
+          <h1 className={classes.title}>
+            {eventId ? "Edit" : "Create"} your event
+          </h1>
           <form onSubmit={onSubmitHandler} className={classes.form}>
             <div className={classes.section}>
               <h2 className={classes.sectionTitle}>Event Details</h2>
               <Input
                 required
-                label='Event Name'
+                label="Event Name"
                 value={formData.name}
                 onChange={(e) => {
                   setFormData((prev) => ({
@@ -161,8 +167,8 @@ export default function MyEventFormPage() {
 
               <div className={classes.checkboxGroup}>
                 <Input
-                  type='checkbox'
-                  label='Make it an online event'
+                  type="checkbox"
+                  label="Make it an online event"
                   onChange={(e) => {
                     setFormData((prev) => ({
                       ...prev,
@@ -174,8 +180,8 @@ export default function MyEventFormPage() {
                 />
 
                 <Input
-                  type='checkbox'
-                  label='Make it a private event'
+                  type="checkbox"
+                  label="Make it a private event"
                   onChange={(e) => {
                     setFormData((prev) => ({
                       ...prev,
@@ -197,14 +203,14 @@ export default function MyEventFormPage() {
                   }));
                 }}
                 required
-                placeholder='Enter event address'
+                placeholder="Enter event address"
               />
 
               <div className={classes.row}>
                 <Input
-                  label='Date'
-                  type='datetime-local'
-                  min={getMinDate}
+                  label="Date"
+                  type="datetime-local"
+                  min={minDate}
                   required
                   value={formData.date}
                   onChange={(e) => {
@@ -216,17 +222,19 @@ export default function MyEventFormPage() {
                 />
 
                 <Input
-                  label='Entrance Price'
-                  type='number'
-                  min='0'
-                  step='0.01'
-                  placeholder='0.00'
+                  label="Entrance Price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
                   value={formData.entrancePrice ?? ""}
                   onChange={(e) => {
                     const entryValue = e.target.value;
                     setFormData((prev) => ({
                       ...prev,
-                      entrancePrice: entryValue ? Number(entryValue) : undefined,
+                      entrancePrice: entryValue
+                        ? Number(entryValue)
+                        : undefined,
                     }));
                   }}
                 />
@@ -234,7 +242,7 @@ export default function MyEventFormPage() {
 
               <div className={classes.dressCodeContainer}>
                 <Select
-                  label='Dress Code'
+                  label="Dress Code"
                   value={formData.dressCode ?? ""}
                   onChange={(e) => {
                     setFormData((prev) => ({
@@ -264,9 +272,9 @@ export default function MyEventFormPage() {
               <h2 className={classes.sectionTitle}>Capacity</h2>
               <div className={classes.row}>
                 <Input
-                  label='Maximum Capacity'
-                  type='number'
-                  min='1'
+                  label="Maximum Capacity"
+                  type="number"
+                  min="1"
                   value={formData.maxCapacity ?? ""}
                   onChange={(e) => {
                     const entryValue = e.target.value;
@@ -277,15 +285,17 @@ export default function MyEventFormPage() {
                   }}
                 />
                 <Input
-                  label='Minimum Attendance'
-                  type='number'
-                  min='1'
+                  label="Minimum Attendance"
+                  type="number"
+                  min="1"
                   value={formData.minPeopleRequired ?? ""}
                   onChange={(e) => {
                     const entryValue = e.target.value;
                     setFormData((prev) => ({
                       ...prev,
-                      minPeopleRequired: entryValue ? Number(entryValue) : undefined,
+                      minPeopleRequired: entryValue
+                        ? Number(entryValue)
+                        : undefined,
                     }));
                   }}
                 />
@@ -293,7 +303,7 @@ export default function MyEventFormPage() {
             </div>
 
             <div className={classes.buttonContainer}>
-              <Button type='submit' variant='solid'>
+              <Button type="submit" variant="solid">
                 {eventId ? "Update" : "Create"} Event
               </Button>
             </div>
