@@ -54,8 +54,6 @@ export default function MyEventsPage() {
   ) : (
     <>
       <PageHeader title="My Events">
-        {null.first}
-
         <Button as={Link} to="/my-events/manage">
           Create new event
         </Button>
