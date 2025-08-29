@@ -25,6 +25,11 @@ type EventFormData = {
   description?: string;
 };
 
+const mapDateToISOString = (date: Date) => {
+  date.setDate(date.getDate() - 1);
+  return date.toISOString().slice(0, new Date().toISOString().lastIndexOf(":"));
+};
+
 export default function MyEventFormPage() {
   const { user } = useAuthContext();
   const { showSuccessAlert, showErrorAlert } = useAlertContext();
@@ -53,11 +58,11 @@ export default function MyEventFormPage() {
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, createdAt, createdBy, date: dateUtc, ...form } = response!;
+        const { id, createdAt, createdBy, date, ...form } = response!;
 
         setFormData({
           ...form,
-          date: dateUtc.toISOString(),
+          date: mapDateToISOString(date),
         });
       } catch (error) {
         showErrorAlert(error);
@@ -71,14 +76,7 @@ export default function MyEventFormPage() {
     }
   }, [eventId, navigate, showErrorAlert]);
 
-  const minDate = useMemo(() => {
-    const minDate = new Date();
-    minDate.setDate(minDate.getDate() - 1);
-
-    return minDate
-      .toISOString()
-      .slice(0, new Date().toISOString().lastIndexOf(":"));
-  }, []);
+  const minDate = useMemo(() => mapDateToISOString(new Date()), []);
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

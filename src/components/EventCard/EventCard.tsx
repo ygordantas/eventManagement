@@ -3,6 +3,7 @@ import DATE_FILTER_TYPES from "../../constants/dateFiltersTypes";
 import type EventModel from "../../models/EventModel";
 import createClassName from "../../utils/createClassName";
 import classes from "./EventCard.module.css";
+import { getEndOfTheDay, getStartOfTheDay } from "../../utils/dateUtils";
 
 type EventCardProps = {
   event: EventModel;
@@ -11,12 +12,8 @@ type EventCardProps = {
 
 export default function EventCard({ event, footer }: EventCardProps) {
   const eventStatus = useMemo(() => {
-    //TODO: Implement event status
-    const fromDate = new Date();
-    fromDate.setHours(0, 0, 0, 0);
-
-    const toDate = new Date();
-    toDate.setHours(23, 59, 59, 99);
+    const fromDate = getStartOfTheDay();
+    const toDate = getEndOfTheDay();
 
     if (event.date >= fromDate && event.date <= toDate)
       return DATE_FILTER_TYPES.today;
@@ -69,6 +66,11 @@ export default function EventCard({ event, footer }: EventCardProps) {
           <span className={classes.metaValue}>
             {event.entrancePrice ? event.entrancePrice : "Free"}
           </span>
+        </div>
+
+        <div className={classes.metaItem}>
+          <span className={classes.metaLabel}>Confirmed guests:</span>
+          <span className={classes.metaValue}>{event.attendeesCount ?? 0}</span>
         </div>
 
         {event.maxCapacity && (

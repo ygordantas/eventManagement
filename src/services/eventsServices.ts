@@ -32,7 +32,7 @@ const mapFirestoreDocToEventModel = (
   } as EventModel;
 };
 
-const EVENTS_COLLECTION = collection(database, "events");
+export const EVENTS_COLLECTION = collection(database, "events");
 
 const eventsServices = {
   getEvents: async (
@@ -89,7 +89,7 @@ const eventsServices = {
     const snapshot = await getDoc(docRef);
 
     return snapshot.exists()
-      ? ({ ...snapshot.data(), id: snapshot.id } as EventModel)
+      ? mapFirestoreDocToEventModel(snapshot)
       : undefined;
   },
   getUserEvents: async (userId: string): Promise<EventModel[]> => {
@@ -110,7 +110,10 @@ const eventsServices = {
   },
   updateEvent: async (
     eventId: string,
-    updatedEvent: Omit<EventModel, "id" | "createdAt" | "createdBy">
+    updatedEvent: Omit<
+      EventModel,
+      "id" | "createdAt" | "createdBy" | "attendees" | "attendeesCount"
+    >
   ): Promise<void> => {
     const docRef = doc(EVENTS_COLLECTION, eventId);
     await updateDoc(docRef, updatedEvent);

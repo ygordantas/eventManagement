@@ -2,7 +2,7 @@ import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { database } from "../firebase";
 import type UserDetails from "../models/UserDetails";
 
-const USERS_COLLECTION = collection(database, "users");
+export const USERS_COLLECTION = collection(database, "users");
 
 const usersServices = {
   getUserDetailsById: async (

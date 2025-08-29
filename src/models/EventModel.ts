@@ -7,6 +7,8 @@ export default interface EventModel {
   address: string;
   createdBy: string;
   createdAt: Date;
+  attendees?: string[];
+  attendeesCount?: number;
   updatedAt?: Date;
   dressCode?: string;
   entrancePrice?: number;

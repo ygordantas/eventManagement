@@ -11,18 +11,30 @@ service cloud.firestore {
               || value.trim().size() == 0
     }
 
+    function isAuthenticated() {
+      return request.auth.uid != null;
+    }
+
     match /users/{userId} {
       allow create: if request.auth.uid == userId
                     && !isEmptyOrWhiteSpace(request.resource.data.firstName) 
                     && !isEmptyOrWhiteSpace(request.resource.data.lastName);
+
+      allow update: if request.auth.uid == userId
       
       allow read: if request.auth.uid == resource.id;
     }
 
+    //todo we should only be able to update the event if when attending
     match /events/{eventId}{
-      allow read: if request.auth.uid != null;
+      allow read: if isAuthenticated();
       allow create: if request.auth.uid == request.resource.data.createdBy;
-      allow update, delete: if isEventCreator();
+      allow delete: if isEventCreator();
+      allow update: if resource.data.date > request.time
+                       && (isEventCreator() 
+                            || (isAuthenticated() &&
+                          (request.resource.data.diff(resource.data).affectedKeys()
+                        .hasOnly(['attendees', 'attendeesCount']))));
     }
   }
 }

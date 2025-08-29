@@ -8,6 +8,9 @@ import useAlertContext from "../../hooks/useAlertContext";
 import EventGrid from "../../components/EventGrid/EventGrid";
 import EventCard from "../../components/EventCard/EventCard";
 import PageHeader from "../../components/PageHeader/PageHeader";
+import { getEndOfTheDay } from "../../utils/dateUtils";
+
+const END_OF_THE_DAY = getEndOfTheDay();
 
 export default function MyEventsPage() {
   const { user } = useAuthContext();
@@ -65,9 +68,11 @@ export default function MyEventsPage() {
             event={e}
             footer={
               <>
-                <Button as={Link} to={`/my-events/manage/${e.id}`}>
-                  Edit
-                </Button>
+                {e.date > END_OF_THE_DAY && (
+                  <Button as={Link} to={`/my-events/manage/${e.id}`}>
+                    Edit
+                  </Button>
+                )}
                 <Button onClick={() => onDeleteEventHandler(e.id)}>
                   Remove
                 </Button>

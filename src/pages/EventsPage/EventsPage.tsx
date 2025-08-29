@@ -11,9 +11,15 @@ import type { DateFilterType } from "../../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../../constants/dateFiltersTypes";
 import classes from "./EventsPage.module.css";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
+import useAuthContext from "../../hooks/useAuthContext";
+import attendeeServices from "../../services/attendeeServices";
+import { getStartOfTheDay } from "../../utils/dateUtils";
+
+const END_OF_THE_DAY = getStartOfTheDay();
 
 export default function EventsPage() {
   const { showErrorAlert } = useAlertContext();
+  const { user, addAttendance, removeAttendance } = useAuthContext();
 
   const [events, setEvents] = useState<EventModel[]>([]);
   const [filter, setFilter] = useState<DateFilterType | undefined>();
@@ -73,6 +79,30 @@ export default function EventsPage() {
     }
   };
 
+  const onAttendEventClickHandler = async (eventId: string) => {
+    try {
+      setIsLoading(true);
+      await attendeeServices.addAttendance(user!.id, eventId);
+      addAttendance(eventId);
+    } catch (error) {
+      showErrorAlert(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onRemoveEventAttendanceClickHandler = async (eventId: string) => {
+    try {
+      setIsLoading(true);
+      await attendeeServices.removeAttendance(user!.id, eventId);
+      removeAttendance(eventId);
+    } catch (error) {
+      showErrorAlert(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return isLoading ? (
     "Loading..."
   ) : (
@@ -94,13 +124,32 @@ export default function EventsPage() {
         />
       </PageHeader>
       <EventGrid>
-        {events.map((e) => (
-          <EventCard
-            key={e.id}
-            event={e}
-            footer={<Button>Attend Event</Button>}
-          />
-        ))}
+        {events.map((e) => {
+          const isCurrentUserAttendingEvent = user?.attendingEvents?.includes(
+            e.id
+          );
+          return (
+            <EventCard
+              key={e.id}
+              event={e}
+              footer={
+                e.date > END_OF_THE_DAY && (
+                  <Button
+                    onClick={() =>
+                      isCurrentUserAttendingEvent
+                        ? onRemoveEventAttendanceClickHandler(e.id)
+                        : onAttendEventClickHandler(e.id)
+                    }
+                  >
+                    {isCurrentUserAttendingEvent
+                      ? "Remove attendance"
+                      : "Attend Event"}
+                  </Button>
+                )
+              }
+            />
+          );
+        })}
       </EventGrid>
       {hasMoreEventsToLoad.current && (
         <Button onClick={onLoadMoreEventsClickHandler}>Load more events</Button>
