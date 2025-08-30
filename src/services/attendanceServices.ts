@@ -9,7 +9,7 @@ import { database } from "../firebase";
 import { EVENTS_COLLECTION } from "./eventsServices";
 import { USERS_COLLECTION } from "./usersServices";
 
-const attendeeServices = {
+const attendanceServices = {
   addAttendance: async (userId: string, eventId: string) => {
     const userDocRef = doc(USERS_COLLECTION, userId);
     const eventDocRef = doc(EVENTS_COLLECTION, eventId);
@@ -42,4 +42,4 @@ const attendeeServices = {
   },
 };
 
-export default attendeeServices;
+export default attendanceServices;

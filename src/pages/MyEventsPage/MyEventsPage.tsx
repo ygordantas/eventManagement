@@ -22,12 +22,9 @@ export default function MyEventsPage() {
     const getMyEvents = async () => {
       try {
         const events = await eventsServices.getUserEvents(user!.id);
-
         setMyEvents(
           events.sort(
-            (a, b) =>
-              new Date(a.date).getMilliseconds() -
-              new Date(b.date).getMilliseconds()
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
           )
         );
       } catch (error) {
@@ -67,16 +64,16 @@ export default function MyEventsPage() {
             key={e.id}
             event={e}
             footer={
-              <>
-                {e.date > END_OF_THE_DAY && (
+              e.date > END_OF_THE_DAY && (
+                <>
                   <Button as={Link} to={`/my-events/manage/${e.id}`}>
                     Edit
                   </Button>
-                )}
-                <Button onClick={() => onDeleteEventHandler(e.id)}>
-                  Remove
-                </Button>
-              </>
+                  <Button onClick={() => onDeleteEventHandler(e.id)}>
+                    Remove
+                  </Button>
+                </>
+              )
             }
           />
         ))}

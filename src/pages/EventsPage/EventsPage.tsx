@@ -11,15 +11,15 @@ import type { DateFilterType } from "../../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../../constants/dateFiltersTypes";
 import classes from "./EventsPage.module.css";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
-import useAuthContext from "../../hooks/useAuthContext";
-import attendeeServices from "../../services/attendeeServices";
 import { getStartOfTheDay } from "../../utils/dateUtils";
+import useAttendanceContext from "../../hooks/useAttendanceContext";
 
 const END_OF_THE_DAY = getStartOfTheDay();
 
 export default function EventsPage() {
   const { showErrorAlert } = useAlertContext();
-  const { user, addAttendance, removeAttendance } = useAuthContext();
+  const { addAttendance, removeAttendance, isAttendingEvent } =
+    useAttendanceContext();
 
   const [events, setEvents] = useState<EventModel[]>([]);
   const [filter, setFilter] = useState<DateFilterType | undefined>();
@@ -82,8 +82,7 @@ export default function EventsPage() {
   const onAttendEventClickHandler = async (eventId: string) => {
     try {
       setIsLoading(true);
-      await attendeeServices.addAttendance(user!.id, eventId);
-      addAttendance(eventId);
+      await addAttendance(eventId);
     } catch (error) {
       showErrorAlert(error);
     } finally {
@@ -94,8 +93,7 @@ export default function EventsPage() {
   const onRemoveEventAttendanceClickHandler = async (eventId: string) => {
     try {
       setIsLoading(true);
-      await attendeeServices.removeAttendance(user!.id, eventId);
-      removeAttendance(eventId);
+      await removeAttendance(eventId);
     } catch (error) {
       showErrorAlert(error);
     } finally {
@@ -125,9 +123,7 @@ export default function EventsPage() {
       </PageHeader>
       <EventGrid>
         {events.map((e) => {
-          const isCurrentUserAttendingEvent = user?.attendingEvents?.includes(
-            e.id
-          );
+          const isCurrentUserAttendingEvent = isAttendingEvent(e.id);
           return (
             <EventCard
               key={e.id}

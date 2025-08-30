@@ -66,38 +66,6 @@ const AuthContextProvider = ({ children }: PropsWithChildren) => {
     []
   );
 
-  const addAttendance = useCallback(
-    (eventId: string) => {
-      if (user?.attendingEvents?.includes(eventId)) return;
-
-      setUser((prev) => {
-        return {
-          ...prev,
-          attendingEvents: prev?.attendingEvents
-            ? [...prev.attendingEvents, eventId]
-            : [eventId],
-        } as AppUser;
-      });
-    },
-    [user?.attendingEvents]
-  );
-
-  const removeAttendance = useCallback(
-    (eventId: string) => {
-      if (!user?.attendingEvents?.includes(eventId)) return;
-
-      setUser((prev) => {
-        return {
-          ...prev,
-          attendingEvents: prev?.attendingEvents?.filter(
-            (id) => id !== eventId
-          ),
-        } as AppUser;
-      });
-    },
-    [user?.attendingEvents]
-  );
-
   return (
     <AuthContext.Provider
       value={{
@@ -105,8 +73,6 @@ const AuthContextProvider = ({ children }: PropsWithChildren) => {
         login,
         logout,
         register,
-        addAttendance,
-        removeAttendance,
       }}
     >
       {children}

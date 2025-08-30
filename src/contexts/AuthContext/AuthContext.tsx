@@ -6,8 +6,6 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>;
   register: (user: Omit<AppUser, "id"> & { password: string }) => Promise<void>;
   logout: () => Promise<void>;
-  removeAttendance: (eventId: string) => void;
-  addAttendance: (eventId: string) => void;
 };
 const AuthContext = createContext<AuthContextType | null>(null);
 
