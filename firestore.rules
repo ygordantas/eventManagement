@@ -25,7 +25,6 @@ service cloud.firestore {
       allow read: if request.auth.uid == resource.id;
     }
 
-    //todo we should only be able to update the event if when attending
     match /events/{eventId}{
       allow read: if isAuthenticated();
       allow create: if request.auth.uid == request.resource.data.createdBy;
