@@ -12,18 +12,17 @@ import DATE_FILTER_TYPES from "../../constants/dateFiltersTypes";
 import classes from "./EventsPage.module.css";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
 import { getStartOfTheDay } from "../../utils/dateUtils";
-import useAttendanceContext from "../../hooks/useAttendanceContext";
+import attendanceServices from "../../services/attendanceServices";
+import useAuthContext from "../../hooks/useAuthContext";
 
 const END_OF_THE_DAY = getStartOfTheDay();
 
 export default function EventsPage() {
+  const { user } = useAuthContext();
   const { showErrorAlert } = useAlertContext();
-  const { addAttendance, removeAttendance, isAttendingEvent } =
-    useAttendanceContext();
-
   const [events, setEvents] = useState<EventModel[]>([]);
   const [filter, setFilter] = useState<DateFilterType | undefined>();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const lastDoc: React.RefObject<
     DocumentSnapshot<DocumentData, DocumentData> | undefined
@@ -32,28 +31,54 @@ export default function EventsPage() {
   const hasMoreEventsToLoad: React.RefObject<boolean | undefined> =
     useRef(undefined);
 
-  useEffect(() => {
-    const getAllEvents = async () => {
-      setIsLoading(true);
-      try {
-        const paginatedResult = await eventsServices.getEvents(filter);
+  // useEffect(() => {
+  //   const getAllEvents = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       const paginatedResult = await eventsServices.getEvents(filter);
 
-        lastDoc.current = paginatedResult.lastDoc;
-        hasMoreEventsToLoad.current = paginatedResult.hasMore;
+  //       lastDoc.current = paginatedResult.lastDoc;
+  //       hasMoreEventsToLoad.current = paginatedResult.hasMore;
+
+  //       setEvents(
+  //         paginatedResult.records.sort(
+  //           (a, b) => a.date.getTime() - b.date.getTime()
+  //         )
+  //       );
+  //     } catch (error) {
+  //       showErrorAlert(error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   getAllEvents();
+  // }, [filter, showErrorAlert]);
+
+  useEffect(() => {
+    lastDoc.current = undefined;
+    hasMoreEventsToLoad.current = undefined;
+
+    const unsubscribe = eventsServices.subscribeToEvents(
+      (result) => {
+        setIsLoading(true);
+        lastDoc.current = result.lastDoc;
+        hasMoreEventsToLoad.current = result.hasMore;
 
         setEvents(
-          paginatedResult.records.sort(
-            (a, b) => a.date.getTime() - b.date.getTime()
-          )
+          result.records.sort((a, b) => a.date.getTime() - b.date.getTime())
         );
-      } catch (error) {
-        showErrorAlert(error);
-      } finally {
         setIsLoading(false);
-      }
-    };
+      },
+      (err) => {
+        showErrorAlert(err);
+        setIsLoading(false);
+      },
+      filter,
+      lastDoc.current
+    );
 
-    getAllEvents();
+    return () => unsubscribe();
   }, [filter, showErrorAlert]);
 
   const onLoadMoreEventsClickHandler = async () => {
@@ -82,7 +107,7 @@ export default function EventsPage() {
   const onAttendEventClickHandler = async (eventId: string) => {
     try {
       setIsLoading(true);
-      await addAttendance(eventId);
+      await attendanceServices.addAttendance(user!.id, eventId);
     } catch (error) {
       showErrorAlert(error);
     } finally {
@@ -93,7 +118,7 @@ export default function EventsPage() {
   const onRemoveEventAttendanceClickHandler = async (eventId: string) => {
     try {
       setIsLoading(true);
-      await removeAttendance(eventId);
+      await attendanceServices.removeAttendance(user!.id, eventId);
     } catch (error) {
       showErrorAlert(error);
     } finally {
@@ -123,7 +148,9 @@ export default function EventsPage() {
       </PageHeader>
       <EventGrid>
         {events.map((e) => {
-          const isCurrentUserAttendingEvent = isAttendingEvent(e.id);
+          const isCurrentUserAttendingEvent = user?.attendingEvents?.includes(
+            e.id
+          );
           return (
             <EventCard
               key={e.id}

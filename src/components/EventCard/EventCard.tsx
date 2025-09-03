@@ -70,7 +70,9 @@ export default function EventCard({ event, footer }: EventCardProps) {
 
         <div className={classes.metaItem}>
           <span className={classes.metaLabel}>Confirmed guests:</span>
-          <span className={classes.metaValue}>{event.attendeesCount ?? 0}</span>
+          <span className={classes.metaValue}>
+            {event.attendees?.length ?? 0}
+          </span>
         </div>
 
         {event.maxCapacity && (

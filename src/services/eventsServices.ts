@@ -6,9 +6,11 @@ import {
   deleteDoc,
   doc,
   DocumentSnapshot,
+  FirestoreError,
   getDoc,
   getDocs,
   limit,
+  onSnapshot,
   query,
   QueryConstraint,
   QueryDocumentSnapshot,
@@ -16,10 +18,12 @@ import {
   updateDoc,
   where,
   type DocumentData,
+  type Unsubscribe,
 } from "firebase/firestore";
 import type { DateFilterType } from "../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../constants/dateFiltersTypes";
 import type { PaginatedResultType } from "../types/PaginatedResultType";
+import { getEndOfTheDay, getStartOfTheDay } from "../utils/dateUtils";
 
 const mapFirestoreDocToEventModel = (
   doc: QueryDocumentSnapshot<DocumentData, DocumentData>
@@ -128,6 +132,63 @@ const eventsServices = {
     const snapshot = await getDocs(queryBuilder);
 
     return snapshot.docs.map(mapFirestoreDocToEventModel);
+  },
+  subscribeToEvents: (
+    onSuccess: (result: PaginatedResultType<EventModel>) => void,
+    onFailure: (error: FirestoreError) => void,
+    dateFilter?: DateFilterType,
+    lastDoc?: DocumentSnapshot<DocumentData, DocumentData>,
+    queryLimit: number = 20
+  ): Unsubscribe => {
+    const queryConstrains: QueryConstraint[] = [limit(queryLimit)];
+
+    const fromDate = getStartOfTheDay();
+
+    const toDate = getEndOfTheDay();
+
+    switch (dateFilter) {
+      case DATE_FILTER_TYPES.all:
+        break;
+      case DATE_FILTER_TYPES.today:
+        queryConstrains.push(
+          where("date", ">=", fromDate),
+          where("date", "<=", toDate)
+        );
+        break;
+      case DATE_FILTER_TYPES.past:
+        queryConstrains.push(where("date", "<", fromDate));
+        break;
+      case DATE_FILTER_TYPES.upcoming:
+        queryConstrains.push(where("date", ">", toDate));
+        break;
+      default:
+        queryConstrains.push(where("date", ">=", fromDate));
+        break;
+    }
+
+    if (lastDoc) {
+      queryConstrains.push(startAfter(lastDoc));
+    }
+
+    const queryBuilder = query(EVENTS_COLLECTION, ...queryConstrains);
+
+    return onSnapshot(
+      queryBuilder,
+      (querySnapshot) => {
+        const docsLength = querySnapshot.docs.length;
+
+        const result = {
+          records: querySnapshot.docs.map(
+            mapFirestoreDocToEventModel
+          ) as EventModel[],
+          hasMore: docsLength == queryLimit,
+          lastDoc: querySnapshot.docs[docsLength - 1],
+        };
+
+        onSuccess(result);
+      },
+      onFailure
+    );
   },
 };
 
