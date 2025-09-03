@@ -1,5 +1,5 @@
 import type EventModel from "../models/EventModel";
-import { database } from "../firebase";
+import { database, fileStorage } from "../firebase";
 import {
   addDoc,
   collection,
@@ -24,6 +24,7 @@ import type { DateFilterType } from "../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../constants/dateFiltersTypes";
 import type { PaginatedResultType } from "../types/PaginatedResultType";
 import { getEndOfTheDay, getStartOfTheDay } from "../utils/dateUtils";
+import { ref, uploadBytes } from "firebase/storage";
 
 const mapFirestoreDocToEventModel = (
   doc: QueryDocumentSnapshot<DocumentData, DocumentData>
@@ -105,8 +106,15 @@ const eventsServices = {
 
     return snapshot.docs.map(mapFirestoreDocToEventModel);
   },
-  createEvent: async (newEvent: Omit<EventModel, "id">): Promise<void> => {
-    await addDoc(EVENTS_COLLECTION, newEvent);
+  createEvent: async (
+    newEvent: Omit<EventModel, "id">,
+    file?: File
+  ): Promise<void> => {
+    const doc = await addDoc(EVENTS_COLLECTION, newEvent);
+    if (file) {
+      const fileRef = ref(fileStorage, doc.id);
+      await uploadBytes(fileRef, file);
+    }
   },
   deleteEvent: async (eventId: string): Promise<void> => {
     const docRef = doc(EVENTS_COLLECTION, eventId);
@@ -117,10 +125,15 @@ const eventsServices = {
     updatedEvent: Omit<
       EventModel,
       "id" | "createdAt" | "createdBy" | "attendees" | "attendeesCount"
-    >
+    >,
+    file?: File
   ): Promise<void> => {
     const docRef = doc(EVENTS_COLLECTION, eventId);
     await updateDoc(docRef, updatedEvent);
+    if (file) {
+      const fileRef = ref(fileStorage, eventId);
+      await uploadBytes(fileRef, file);
+    }
   },
   getCustomEvent: async (): Promise<EventModel[]> => {
     const queryBuilder = query(

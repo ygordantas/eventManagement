@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "../../../components/Button/Button";
 import Input from "../../../components/Input/Input";
 import Select from "../../../components/Select/Select";
@@ -44,6 +44,9 @@ export default function MyEventFormPage() {
     address: "",
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [file, setFile] = useState<File | undefined>();
+
+  const fileInputRef: React.RefObject<null | HTMLInputElement> = useRef(null);
 
   useEffect(() => {
     const getEventDetails = async () => {
@@ -98,34 +101,41 @@ export default function MyEventFormPage() {
       } = formData;
 
       if (eventId) {
-        await eventsServices.updateEvent(eventId, {
-          date: new Date(date),
-          entrancePrice,
-          minPeopleRequired,
-          name,
-          isOnline,
-          isPrivate,
-          address,
-          dressCode,
-          maxCapacity,
-          description,
-          updatedAt: TODAY,
-        });
+        await eventsServices.updateEvent(
+          eventId,
+          {
+            date: new Date(date),
+            entrancePrice,
+            minPeopleRequired,
+            name,
+            isOnline,
+            isPrivate,
+            address,
+            dressCode,
+            maxCapacity,
+            description,
+            updatedAt: TODAY,
+          },
+          file
+        );
       } else {
-        await eventsServices.createEvent({
-          date: new Date(date),
-          entrancePrice,
-          minPeopleRequired,
-          name,
-          isOnline,
-          isPrivate,
-          address,
-          dressCode,
-          maxCapacity,
-          description,
-          createdBy: user!.id,
-          createdAt: TODAY,
-        });
+        await eventsServices.createEvent(
+          {
+            date: new Date(date),
+            entrancePrice,
+            minPeopleRequired,
+            name,
+            isOnline,
+            isPrivate,
+            address,
+            dressCode,
+            maxCapacity,
+            description,
+            createdBy: user!.id,
+            createdAt: TODAY,
+          },
+          file
+        );
       }
       showSuccessAlert(
         `Event ${eventId ? "updated" : "created"} successfully!`
@@ -162,7 +172,6 @@ export default function MyEventFormPage() {
                   }));
                 }}
               />
-
               <div className={classes.checkboxGroup}>
                 <Input
                   type="checkbox"
@@ -189,7 +198,6 @@ export default function MyEventFormPage() {
                   checked={formData.isPrivate}
                 />
               </div>
-
               <Input
                 label={formData.isOnline ? "Link URL" : "Address"}
                 type={formData.isOnline ? "url" : "text"}
@@ -203,7 +211,6 @@ export default function MyEventFormPage() {
                 required
                 placeholder="Enter event address"
               />
-
               <div className={classes.row}>
                 <Input
                   label="Date"
@@ -237,7 +244,6 @@ export default function MyEventFormPage() {
                   }}
                 />
               </div>
-
               <div className={classes.dressCodeContainer}>
                 <Select
                   label="Dress Code"
@@ -251,7 +257,6 @@ export default function MyEventFormPage() {
                   options={DRESS_CODE_TYPES}
                 />
               </div>
-
               <div className={classes.descriptionContainer}>
                 <Textarea
                   label={"Description"}
@@ -262,6 +267,26 @@ export default function MyEventFormPage() {
                       description: e.target.value,
                     }))
                   }
+                />
+              </div>
+              <div className={classes.dressCodeContainer}>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    fileInputRef.current?.click();
+                  }}
+                >
+                  Upload photo
+                </Button>
+                <span>{file?.name ?? "No file selected"}</span>
+                <input
+                  ref={fileInputRef}
+                  onChange={(e) => {
+                    setFile(e.target.files?.[0]);
+                  }}
+                  style={{ display: "none" }}
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.svg"
                 />
               </div>
             </div>
