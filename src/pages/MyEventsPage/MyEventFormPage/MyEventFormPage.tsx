@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Button from "../../../components/Button/Button";
 import Input from "../../../components/Input/Input";
 import Select from "../../../components/Select/Select";
@@ -9,6 +9,7 @@ import useAuthContext from "../../../hooks/useAuthContext";
 import { useNavigate, useParams } from "react-router";
 import useAlertContext from "../../../hooks/useAlertContext";
 import eventsServices from "../../../services/eventsServices";
+import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 
 const TODAY = new Date();
 
@@ -45,8 +46,6 @@ export default function MyEventFormPage() {
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [file, setFile] = useState<File | undefined>();
-
-  const fileInputRef: React.RefObject<null | HTMLInputElement> = useRef(null);
 
   useEffect(() => {
     const getEventDetails = async () => {
@@ -269,26 +268,8 @@ export default function MyEventFormPage() {
                   }
                 />
               </div>
-              <div className={classes.dressCodeContainer}>
-                <Button
-                  type="button"
-                  onClick={() => {
-                    fileInputRef.current?.click();
-                  }}
-                >
-                  Upload photo
-                </Button>
-                <span>{file?.name ?? "No file selected"}</span>
-                <input
-                  ref={fileInputRef}
-                  onChange={(e) => {
-                    setFile(e.target.files?.[0]);
-                  }}
-                  style={{ display: "none" }}
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.svg"
-                />
-              </div>
+
+              <ImageUpload file={file} onChange={(f) => setFile(f)} />
             </div>
 
             <div className={classes.section}>
