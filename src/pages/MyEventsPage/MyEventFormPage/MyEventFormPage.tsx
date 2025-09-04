@@ -44,8 +44,9 @@ export default function MyEventFormPage() {
     date: "",
     address: "",
   });
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [file, setFile] = useState<File | undefined>();
+  const [fileOrPath, setFileOrPath] = useState<File | undefined | string>();
 
   useEffect(() => {
     const getEventDetails = async () => {
@@ -61,6 +62,11 @@ export default function MyEventFormPage() {
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, createdAt, createdBy, date, ...form } = response!;
+
+        if (response?.hasImage) {
+          const imageUrl = await eventsServices.getEventImagePath(id);
+          setFileOrPath(imageUrl);
+        }
 
         setFormData({
           ...form,
@@ -82,6 +88,7 @@ export default function MyEventFormPage() {
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const file = fileOrPath instanceof File ? fileOrPath : undefined;
 
     try {
       setIsLoading(true);
@@ -114,6 +121,7 @@ export default function MyEventFormPage() {
             maxCapacity,
             description,
             updatedAt: TODAY,
+            hasImage: !!fileOrPath,
           },
           file
         );
@@ -132,6 +140,7 @@ export default function MyEventFormPage() {
             description,
             createdBy: user!.id,
             createdAt: TODAY,
+            hasImage: !!fileOrPath,
           },
           file
         );
@@ -269,7 +278,10 @@ export default function MyEventFormPage() {
                 />
               </div>
 
-              <ImageUpload file={file} onChange={(f) => setFile(f)} />
+              <ImageUpload
+                fileOrPath={fileOrPath}
+                onChange={(f) => setFileOrPath(f)}
+              />
             </div>
 
             <div className={classes.section}>

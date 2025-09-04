@@ -5,11 +5,11 @@ import Button from "../Button/Button";
 type ImageUploadProps = {
   onChange: (file?: File) => void;
   label?: string;
-  file?: File;
+  fileOrPath?: File | string;
 };
 export default function ImageUpload({
   onChange,
-  file,
+  fileOrPath,
   label = "Upload image",
 }: ImageUploadProps) {
   const fileInputRef: React.RefObject<null | HTMLInputElement> = useRef(null);
@@ -22,15 +22,25 @@ export default function ImageUpload({
     }
   };
 
+  let previewFileUrl: string | undefined;
+  let file: File | undefined;
+
+  if (typeof fileOrPath === "string") {
+    previewFileUrl = fileOrPath;
+  } else if (fileOrPath instanceof File) {
+    previewFileUrl = URL.createObjectURL(fileOrPath);
+    file = fileOrPath;
+  }
+
   return (
     <div className={classes.container}>
       <div className={classes.imgContainer}>
-        {file && (
+        {previewFileUrl && (
           <>
             <button type="button" onClick={onDeleteHandler}>
               X
             </button>
-            <img src={URL.createObjectURL(file)} />
+            <img src={previewFileUrl} />
           </>
         )}
       </div>

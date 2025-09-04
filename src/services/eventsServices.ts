@@ -24,7 +24,7 @@ import type { DateFilterType } from "../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../constants/dateFiltersTypes";
 import type { PaginatedResultType } from "../types/PaginatedResultType";
 import { getEndOfTheDay, getStartOfTheDay } from "../utils/dateUtils";
-import { ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const mapFirestoreDocToEventModel = (
   doc: QueryDocumentSnapshot<DocumentData, DocumentData>
@@ -202,6 +202,10 @@ const eventsServices = {
       },
       onFailure
     );
+  },
+  getEventImagePath: (eventId: string): Promise<string> => {
+    const fileRef = ref(fileStorage, eventId);
+    return getDownloadURL(fileRef);
   },
 };
 
