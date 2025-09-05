@@ -9,7 +9,6 @@ import useAuthContext from "../../../hooks/useAuthContext";
 import { useNavigate, useParams } from "react-router";
 import useAlertContext from "../../../hooks/useAlertContext";
 import eventsServices from "../../../services/eventsServices";
-import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 
 const TODAY = new Date();
 
@@ -45,7 +44,7 @@ export default function MyEventFormPage() {
     address: "",
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [fileOrPath, setFileOrPath] = useState<File | string | undefined>();
+  // const [fileOrPath, setFileOrPath] = useState<File | string | undefined>();
 
   useEffect(() => {
     const getEventDetails = async () => {
@@ -68,9 +67,9 @@ export default function MyEventFormPage() {
           date: mapDateToISOString(date),
         });
 
-        if (hasImage) {
-          setFileOrPath(imagePath);
-        }
+        // if (hasImage) {
+        //   setFileOrPath(imagePath);
+        // }
       } catch (error) {
         showErrorAlert(error);
       } finally {
@@ -275,10 +274,10 @@ export default function MyEventFormPage() {
                   }
                 />
               </div>
-              <ImageUpload
+              {/* <ImageUpload
                 onChange={(f) => setFileOrPath(f)}
                 fileOrPath={fileOrPath}
-              />
+              /> */}
             </div>
 
             <div className={classes.section}>
