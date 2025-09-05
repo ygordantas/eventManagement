@@ -24,15 +24,28 @@ import type { DateFilterType } from "../constants/dateFiltersTypes";
 import DATE_FILTER_TYPES from "../constants/dateFiltersTypes";
 import type { PaginatedResultType } from "../types/PaginatedResultType";
 import { getEndOfTheDay, getStartOfTheDay } from "../utils/dateUtils";
-import { ref, uploadBytes } from "firebase/storage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 
-const mapFirestoreDocToEventModel = (
+const mapFirestoreDocToEventModel = async (
   doc: QueryDocumentSnapshot<DocumentData, DocumentData>
-): EventModel => {
+): Promise<EventModel> => {
   const docData = { ...doc.data() };
+  const id = doc.id;
+
   docData.date = docData.date.toDate();
+
+  if (docData.hasImage) {
+    const fileRef = ref(fileStorage, id);
+    docData.imagePath = await getDownloadURL(fileRef);
+  }
+
   return {
-    id: doc.id,
+    id,
     ...docData,
   } as EventModel;
 };
@@ -83,8 +96,12 @@ const eventsServices = {
 
     const docsLength = snapshot.docs.length;
 
+    const eventsPromises = snapshot.docs.map(mapFirestoreDocToEventModel);
+
+    const events = await Promise.all(eventsPromises);
+
     return {
-      records: snapshot.docs.map(mapFirestoreDocToEventModel) as EventModel[],
+      records: events,
       hasMore: docsLength == queryLimit,
       lastDoc: snapshot.docs[docsLength - 1],
     };
@@ -93,9 +110,11 @@ const eventsServices = {
     const docRef = doc(EVENTS_COLLECTION, eventId);
     const snapshot = await getDoc(docRef);
 
-    return snapshot.exists()
-      ? mapFirestoreDocToEventModel(snapshot)
-      : undefined;
+    if (!snapshot.exists()) return;
+
+    const event = await mapFirestoreDocToEventModel(snapshot);
+
+    return event;
   },
   getUserEvents: async (userId: string): Promise<EventModel[]> => {
     const getUserEventsQuery = query(
@@ -104,12 +123,17 @@ const eventsServices = {
     );
     const snapshot = await getDocs(getUserEventsQuery);
 
-    return snapshot.docs.map(mapFirestoreDocToEventModel);
+    const eventsPromises = snapshot.docs.map(mapFirestoreDocToEventModel);
+
+    const events = await Promise.all(eventsPromises);
+
+    return events;
   },
   createEvent: async (
     newEvent: Omit<EventModel, "id">,
     file?: File
   ): Promise<void> => {
+    newEvent.hasImage = Boolean(file);
     const doc = await addDoc(EVENTS_COLLECTION, newEvent);
     if (file) {
       const fileRef = ref(fileStorage, doc.id);
@@ -118,7 +142,15 @@ const eventsServices = {
   },
   deleteEvent: async (eventId: string): Promise<void> => {
     const docRef = doc(EVENTS_COLLECTION, eventId);
-    await deleteDoc(docRef);
+    const snapshot = await getDoc(docRef);
+
+    if (snapshot.exists()) {
+      if (snapshot.data().hasImage) {
+        const fileRef = ref(fileStorage, eventId);
+        await deleteObject(fileRef);
+      }
+      await deleteDoc(docRef);
+    }
   },
   updateEvent: async (
     eventId: string,
@@ -128,8 +160,11 @@ const eventsServices = {
     >,
     file?: File
   ): Promise<void> => {
+    updatedEvent.hasImage = Boolean(file);
+
     const docRef = doc(EVENTS_COLLECTION, eventId);
     await updateDoc(docRef, updatedEvent);
+
     if (file) {
       const fileRef = ref(fileStorage, eventId);
       await uploadBytes(fileRef, file);
@@ -144,7 +179,11 @@ const eventsServices = {
 
     const snapshot = await getDocs(queryBuilder);
 
-    return snapshot.docs.map(mapFirestoreDocToEventModel);
+    const eventsPromises = snapshot.docs.map(mapFirestoreDocToEventModel);
+
+    const events = await Promise.all(eventsPromises);
+
+    return events;
   },
   subscribeToEvents: (
     onSuccess: (result: PaginatedResultType<EventModel>) => void,
@@ -187,13 +226,17 @@ const eventsServices = {
 
     return onSnapshot(
       queryBuilder,
-      (querySnapshot) => {
+      async (querySnapshot) => {
         const docsLength = querySnapshot.docs.length;
 
+        const eventsPromises = querySnapshot.docs.map(
+          mapFirestoreDocToEventModel
+        );
+
+        const events = await Promise.all(eventsPromises);
+
         const result = {
-          records: querySnapshot.docs.map(
-            mapFirestoreDocToEventModel
-          ) as EventModel[],
+          records: events,
           hasMore: docsLength == queryLimit,
           lastDoc: querySnapshot.docs[docsLength - 1],
         };

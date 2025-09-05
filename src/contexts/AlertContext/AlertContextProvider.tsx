@@ -8,7 +8,7 @@ import type { AlertType } from "../../components/Alert/Alert";
 import AlertContext from "./AlertContext";
 import Alert from "../../components/Alert/Alert";
 
-const DEFAULT_DISMISS_TIME_IN_MS = 2000;
+const DEFAULT_DISMISS_TIME_IN_MS = 5000;
 
 export type AlertData = {
   type?: AlertType;

@@ -14,4 +14,6 @@ export default interface EventModel {
   maxCapacity?: number;
   minPeopleRequired?: number;
   description?: string;
+  hasImage?: boolean;
+  imagePath?: string;
 }

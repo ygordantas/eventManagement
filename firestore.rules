@@ -20,9 +20,9 @@ service cloud.firestore {
                     && !isEmptyOrWhiteSpace(request.resource.data.firstName) 
                     && !isEmptyOrWhiteSpace(request.resource.data.lastName);
 
-      allow update: if request.auth.uid == userId
+      allow update: if request.auth.uid != null
       
-      allow read: if request.auth.uid == resource.id;
+      allow read: if request.auth.uid != null
     }
 
     match /events/{eventId}{

@@ -9,6 +9,7 @@ import EventGrid from "../../components/EventGrid/EventGrid";
 import EventCard from "../../components/EventCard/EventCard";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import { getEndOfTheDay } from "../../utils/dateUtils";
+import attendanceServices from "../../services/attendanceServices";
 
 const END_OF_THE_DAY = getEndOfTheDay();
 
@@ -40,7 +41,7 @@ export default function MyEventsPage() {
   const onDeleteEventHandler = async (eventId: string): Promise<void> => {
     try {
       setIsLoading(true);
-      await eventsServices.deleteEvent(eventId);
+      await attendanceServices.deleteEvent(eventId);
       setMyEvents((prev) => prev.filter((e) => e.id !== eventId));
     } catch (error) {
       showErrorAlert(error);

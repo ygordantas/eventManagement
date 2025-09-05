@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Button from "../../../components/Button/Button";
 import Input from "../../../components/Input/Input";
 import Select from "../../../components/Select/Select";
@@ -9,6 +9,7 @@ import useAuthContext from "../../../hooks/useAuthContext";
 import { useNavigate, useParams } from "react-router";
 import useAlertContext from "../../../hooks/useAlertContext";
 import eventsServices from "../../../services/eventsServices";
+import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 
 const TODAY = new Date();
 
@@ -44,9 +45,7 @@ export default function MyEventFormPage() {
     address: "",
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [file, setFile] = useState<File | undefined>();
-
-  const fileInputRef: React.RefObject<null | HTMLInputElement> = useRef(null);
+  const [fileOrPath, setFileOrPath] = useState<File | string | undefined>();
 
   useEffect(() => {
     const getEventDetails = async () => {
@@ -61,12 +60,17 @@ export default function MyEventFormPage() {
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, createdAt, createdBy, date, ...form } = response!;
+        const { id, createdAt, createdBy, date, hasImage, imagePath, ...form } =
+          response!;
 
         setFormData({
           ...form,
           date: mapDateToISOString(date),
         });
+
+        if (hasImage) {
+          setFileOrPath(imagePath);
+        }
       } catch (error) {
         showErrorAlert(error);
       } finally {
@@ -83,6 +87,8 @@ export default function MyEventFormPage() {
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const file = fileOrPath instanceof File ? fileOrPath : undefined;
 
     try {
       setIsLoading(true);
@@ -269,26 +275,10 @@ export default function MyEventFormPage() {
                   }
                 />
               </div>
-              <div className={classes.dressCodeContainer}>
-                <Button
-                  type="button"
-                  onClick={() => {
-                    fileInputRef.current?.click();
-                  }}
-                >
-                  Upload photo
-                </Button>
-                <span>{file?.name ?? "No file selected"}</span>
-                <input
-                  ref={fileInputRef}
-                  onChange={(e) => {
-                    setFile(e.target.files?.[0]);
-                  }}
-                  style={{ display: "none" }}
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.svg"
-                />
-              </div>
+              <ImageUpload
+                onChange={(f) => setFileOrPath(f)}
+                fileOrPath={fileOrPath}
+              />
             </div>
 
             <div className={classes.section}>

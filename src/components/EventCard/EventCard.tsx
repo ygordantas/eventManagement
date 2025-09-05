@@ -33,6 +33,12 @@ export default function EventCard({ event, footer }: EventCardProps) {
         <span className={createClassName(classes.status, classes[eventStatus])}>
           {eventStatus}
         </span>
+        {event.imagePath && (
+          <img
+            src={event.imagePath}
+            alt={`Event image for event ${event.id}`}
+          />
+        )}
       </div>
 
       <div className={classes.eventDetails}>
