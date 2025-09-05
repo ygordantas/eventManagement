@@ -88,7 +88,7 @@ export default function MyEventFormPage() {
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const file = fileOrPath instanceof File ? fileOrPath : undefined;
+    // const file = fileOrPath instanceof File ? fileOrPath : undefined;
 
     try {
       setIsLoading(true);
@@ -121,8 +121,8 @@ export default function MyEventFormPage() {
             maxCapacity,
             description,
             updatedAt: TODAY,
-          },
-          file
+          }
+          // file
         );
       } else {
         await eventsServices.createEvent(
@@ -139,8 +139,8 @@ export default function MyEventFormPage() {
             description,
             createdBy: user!.id,
             createdAt: TODAY,
-          },
-          file
+          }
+          // file
         );
       }
       showSuccessAlert(
